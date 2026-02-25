@@ -1,69 +1,87 @@
-import React from "react";
+// src/components/hero/process/ConnectorLines.tsx
+
+import React, { useMemo } from "react";
 import { processSteps } from "./process_data";
 import {
   getCurveParams,
   getBezierPoint,
   CURVE_EDGE_GAP,
-  getLabelPlaneY,
-  LABEL_VISUAL_OFFSET,
+  CURVE_CONFIG,
 } from "./curveConfig";
+import type { ScreenType } from "./curveConfig";
 
 interface ConnectorLinesProps {
   height: number;
   width: number;
+  screen: ScreenType;
 }
 
 const ConnectorLines: React.FC<ConnectorLinesProps> = ({
   height,
   width,
+  screen,
 }) => {
-  if (!processSteps?.length || width <= 0 || height <= 0)
+  if (!processSteps?.length || width <= 0 || height <= 0) {
     return null;
+  }
 
-  const curveParams = getCurveParams(width, height);
-  const labelTopY = getLabelPlaneY(height);
+  const curveParams = useMemo(() => {
+    return getCurveParams(width, height, CURVE_CONFIG[screen]);
+  }, [width, height, screen]);
+
+  const dotRadius = useMemo(() => {
+    if (width < 500) return 5;
+    if (width < 900) return 6;
+    if (width < 1200) return 7;
+    return 8;
+  }, [width]);
+
+  // Single horizontal plane for all lines to end at
+  const horizontalPlaneY = useMemo(() => {
+    const config = CURVE_CONFIG[screen];
+    const baseY = height * config.curveVerticalShift;
+    const leftMaxY = baseY + height * config.startYOffset + height * config.leftStretchDownRatio;
+    const rightMaxY = baseY + height * config.endYOffset + height * config.rightStretchDownRatio;
+    const maxCurveY = Math.max(leftMaxY, rightMaxY);
+    
+    // Add offset below the curve for the horizontal plane
+    return maxCurveY + height * 0.1; // Adjust 0.1 to move plane up/down
+  }, [height, screen]);
+
+  const total = processSteps.length;
 
   return (
-    <svg
-      viewBox={`0 0 ${width} ${height}`}
-      className="absolute inset-0 w-full h-full pointer-events-none"
-      preserveAspectRatio="none"
-    >
+    <>
       {processSteps.map((step, index) => {
         const t =
-          processSteps.length === 1
+          total === 1
             ? 0.5
             : CURVE_EDGE_GAP +
-              (index / (processSteps.length - 1)) *
-                (1 - CURVE_EDGE_GAP * 2);
+              (index / (total - 1)) * (1 - CURVE_EDGE_GAP * 2);
 
         const { x, y } = getBezierPoint(t, curveParams);
 
         return (
           <g key={step.id}>
             {/* Dot on curve */}
-            <circle
-              cx={x}
-              cy={y}
-              r={6}
-              fill={step.color}
-            />
+            <circle cx={x} cy={y} r={dotRadius} fill={step.color} />
 
-            {/* Line touching label */}
+            {/* Vertical connector line - all end at same horizontal plane */}
             <line
               x1={x}
               y1={y}
               x2={x}
-              y2={labelTopY + LABEL_VISUAL_OFFSET}
-              stroke="rgba(255,255,255,0.35)"
-              strokeWidth={1.5}
+              y2={horizontalPlaneY}
+              stroke="rgba(255,255,255,0.6)"
+              strokeWidth={2}
               strokeDasharray="4 6"
+              strokeLinecap="round"
             />
           </g>
         );
       })}
-    </svg>
+    </>
   );
 };
 
-export default ConnectorLines;
+export default React.memo(ConnectorLines);

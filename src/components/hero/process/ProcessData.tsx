@@ -1,49 +1,74 @@
-import React, { useState } from "react";
+// src/components/hero/process/ProcessData.tsx
+
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { processSteps } from "./process_data";
 import {
   getCurveParams,
   getBezierPoint,
   CURVE_EDGE_GAP,
   getLabelPlaneY,
+  CURVE_CONFIG,
 } from "./curveConfig";
+import type { ScreenType } from "./curveConfig";
 
 interface ProcessDataProps {
   height: number;
   width: number;
+  screen: ScreenType;
 }
 
-const ProcessData: React.FC<ProcessDataProps> = ({
-  height,
-  width,
-}) => {
-  const [activeStep, setActiveStep] = useState<string | null>(
-    null
-  );
+const ProcessData: React.FC<ProcessDataProps> = ({ height, width, screen }) => {
+  const [activeStep, setActiveStep] = useState<string | null>(null);
 
-  if (!processSteps?.length || width <= 0 || height <= 0)
+  if (!processSteps?.length || width <= 0 || height <= 0) {
     return null;
+  }
 
-  const curveParams = getCurveParams(width, height);
-  const labelTopY = getLabelPlaneY(height);
+  const curveParams = useMemo(() => {
+    return getCurveParams(width, height, CURVE_CONFIG[screen]);
+  }, [width, height, screen]);
+
+  const labelTopY = useMemo(() => {
+    return getLabelPlaneY(height, CURVE_CONFIG[screen]);
+  }, [height, screen]);
+
+  const totalSteps = processSteps.length;
+
+  const handleClose = useCallback(() => {
+    setActiveStep(null);
+  }, []);
+
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setActiveStep(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleEsc);
+
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+    };
+  }, []);
 
   return (
     <>
       {activeStep && (
         <div
           className="fixed inset-0 bg-black/25 md:hidden z-40"
-          onClick={() => setActiveStep(null)}
+          onClick={handleClose}
         />
       )}
 
       {processSteps.map((step, index) => {
         const t =
-          processSteps.length === 1
+          totalSteps === 1
             ? 0.5
-            : CURVE_EDGE_GAP +
-              (index / (processSteps.length - 1)) *
-                (1 - CURVE_EDGE_GAP * 2);
+            : CURVE_EDGE_GAP + (index / (totalSteps - 1)) * (1 - CURVE_EDGE_GAP * 2);
 
         const { x } = getBezierPoint(t, curveParams);
+
         const isActive = activeStep === step.id;
 
         return (
@@ -60,42 +85,17 @@ const ProcessData: React.FC<ProcessDataProps> = ({
               setActiveStep(isActive ? null : step.id);
             }}
           >
-            {/* Title */}
             <h3
-              className={`font-extrabold leading-tight tracking-tight ${
-                isActive
-                  ? "text-blue-400"
-                  : "text-white"
+              className={`font-extrabold transition-colors duration-200 text-sm sm:text-base md:text-lg ${
+                isActive ? "text-blue-400" : "text-white"
               }`}
-              style={{
-                fontSize: "clamp(0.95rem, 1.6vw, 1.4rem)",
-              }}
             >
               {step.title}
             </h3>
-
-            {/* Desktop + Tablet Description */}
-            <p
-              className={`hidden md:block mt-2 leading-relaxed ${
-                isActive
-                  ? "text-white"
-                  : "text-white/60"
-              }`}
-              style={{
-                fontSize: "clamp(0.65rem, 0.85vw, 0.85rem)",
-                maxWidth: "160px",
-              }}
-            >
-              {step.description}
-            </p>
-
-            {/* Mobile Popup */}
             {isActive && (
-              <div className="md:hidden absolute bottom-full mb-3 px-4 py-3 bg-black/75 rounded-lg shadow-xl max-w-[220px]">
-                <p className="text-white leading-relaxed text-sm">
-                  {step.description}
-                </p>
-              </div>
+              <p className="mt-2 text-xs sm:text-sm text-white/80 max-w-[200px] md:max-w-[250px]">
+                {step.description}
+              </p>
             )}
           </div>
         );
@@ -104,4 +104,4 @@ const ProcessData: React.FC<ProcessDataProps> = ({
   );
 };
 
-export default ProcessData;
+export default React.memo(ProcessData);

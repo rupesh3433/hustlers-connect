@@ -34,7 +34,10 @@ const Footer: React.FC = () => {
   const currentYear = useMemo(() => new Date().getFullYear(), []);
 
   return (
-    <footer className="relative w-full bg-[#0B0F19] text-gray-300">
+    <footer
+      className="relative w-full bg-[#0B0F19] text-gray-300"
+      style={{ scrollSnapAlign: 'start' }} // added for scroll snap
+    >
       <div className="h-[2px] w-full bg-gradient-to-r from-blue-600 via-purple-600 to-red-500" />
 
       <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10 lg:px-16 py-8 sm:py-8">

@@ -1,63 +1,81 @@
-import React, { useEffect, useRef, useState } from "react";
+// src/components/hero/process/HeroProcess.tsx
+
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import ProcessCurve from "./ProcessCurve";
 import ConnectorLines from "./ConnectorLines";
 import ProcessData from "./ProcessData";
+import type { ScreenType } from "./curveConfig";
+
+const GEOMETRY_HEIGHT = 300;
+const VISIBLE_HEIGHT = 350;  // Changed from 360 to 650
 
 const HeroProcess: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [width, setWidth] = useState<number>(1300);
-
-  const height = 330;
+  const [width, setWidth] = useState<number>(0);
 
   useEffect(() => {
-    const updateWidth = () => {
-      if (!containerRef.current) return;
+    if (!containerRef.current) return;
 
-      const containerWidth = containerRef.current.offsetWidth;
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
 
-      if (containerWidth > 0) {
-        setWidth(containerWidth);
+      const newWidth = entry.contentRect.width;
+
+      if (newWidth > 0) {
+        setWidth(newWidth);
       }
-    };
+    });
 
-    updateWidth();
-    window.addEventListener("resize", updateWidth);
+    observer.observe(containerRef.current);
 
     return () => {
-      window.removeEventListener("resize", updateWidth);
+      observer.disconnect();
     };
   }, []);
+
+  const screen: ScreenType = useMemo(() => {
+    if (width < 640) return "mobile";
+    if (width < 1024) return "tablet";
+    if (width < 1536) return "laptop";
+    return "desktop";
+  }, [width]);
 
   return (
     <div
       ref={containerRef}
-      className="
-    relative
-    w-full
-    h-[330px]
-    overflow-visible
-    mb-0
-    sm:mb-0
-    md:mb-14
-    lg:mb-18
-  "
+      className="relative w-full overflow-visible"
+      style={{ height: VISIBLE_HEIGHT }}
     >
-      {/* Curve */}
-      <svg
-        viewBox={`0 0 ${width} ${height}`}
-        className="absolute inset-0 w-full h-full"
-        preserveAspectRatio="none"
-      >
-        <ProcessCurve width={width} height={height} />
-      </svg>
+      {width > 0 && (
+        <>
+          <svg
+            viewBox={`0 -${GEOMETRY_HEIGHT} ${width} ${GEOMETRY_HEIGHT * 2}`}
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            preserveAspectRatio="none"
+            style={{ overflow: "visible" }}
+          >
+            <ProcessCurve width={width} height={GEOMETRY_HEIGHT} screen={screen} />
+          </svg>
 
-      {/* Lines */}
-      <ConnectorLines width={width} height={height} />
+          <svg
+            viewBox={`0 -${GEOMETRY_HEIGHT} ${width} ${GEOMETRY_HEIGHT * 2}`}
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            preserveAspectRatio="none"
+            style={{ overflow: "visible" }}
+          >
+            <ConnectorLines
+              width={width}
+              height={GEOMETRY_HEIGHT}
+              screen={screen}
+            />
+          </svg>
 
-      {/* Labels */}
-      <ProcessData width={width} height={height} />
+          <ProcessData width={width} height={GEOMETRY_HEIGHT} screen={screen} />
+        </>
+      )}
     </div>
   );
 };
 
-export default HeroProcess;
+export default React.memo(HeroProcess);

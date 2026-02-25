@@ -1,5 +1,48 @@
 @import "tailwindcss";
 
 /* ============================================================
-   SAFE GLOBAL RESET
+   FAST + STRONG SNAP (Production Balanced)
 ============================================================ */
+
+html {
+  height: 100%;
+  scroll-behavior: auto;              /* remove browser slow smooth */
+  scroll-snap-type: y mandatory;      /* keep strong snap */
+  scroll-padding-top: 64px; /* mobile navbar height */
+}
+
+@media (min-width: 768px) {
+   html {
+     scroll-padding-top: 80px; /* desktop navbar height */
+   }
+ }
+
+body {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: #010106;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Each full-screen section */
+section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;           /* force perfect stop */
+}
+
+/* Performance optimization */
+.snap-section {
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Prevent elastic overscroll bounce */
+html,
+body {
+  overscroll-behavior-y: none;
+}
+

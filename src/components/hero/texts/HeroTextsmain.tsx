@@ -15,40 +15,42 @@ const HeroTexts: React.FC = () => {
         w-full
         flex
         flex-col
-        text-center md:text-left
+        items-center
+        text-center
         px-4 sm:px-6 md:px-10 lg:px-16 xl:px-20
-        pb-14 md:pb-20
         overflow-hidden
       "
     >
-      {/* Glow Background (Non-interactive) */}
+      {/* Glow Background */}
       <div className="absolute inset-0 -z-10 flex justify-center pointer-events-none">
         <div className="w-[600px] h-[600px] bg-gradient-to-r from-purple-500/20 via-violet-500/20 to-pink-500/20 blur-[140px] rounded-full" />
       </div>
 
-      {/* Heading */}
-      <div className="w-full relative z-10">
+      {/* Content */}
+      <div
+        className="
+          relative
+          z-10
+          w-full
+          max-w-3xl
+          flex
+          flex-col
+          items-center
+          space-y-4
+          md:space-y-5
+        "
+      >
         <HeroHeading />
-      </div>
 
-      {/* Paragraph (No flex wrapper now) */}
-      <div className="w-full relative z-10">
         <HeroParagraph />
-      </div>
 
-      {/* Email Form */}
-      <div className="w-full relative z-10 mt-4">
         <HeroEmailForm />
-      </div>
 
-      {/* Dynamic Count */}
-      <div className="w-full relative z-10 mt-6 md:mt-4">
         <DynamicCount />
-      </div>
 
-      {/* Social Media Icons */}
-      <div className="w-full relative z-10 mt-3 flex justify-center">
-        <SocialMediaIcons size={24} />
+        <div className="flex justify-center">
+          <SocialMediaIcons size={24} />
+        </div>
       </div>
     </section>
   );
