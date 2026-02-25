@@ -69,7 +69,7 @@ const DynamicCount: React.FC<DynamicCountProps> = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        gap: "10px",
+        gap: "12px",
       }}
     >
       {STATS.map((stat, i) => (
@@ -81,7 +81,7 @@ const DynamicCount: React.FC<DynamicCountProps> = ({
               alignItems: "center",
               justifyContent: "center",
               textAlign: "center",
-              gap: "2px",
+              gap: "6px",
             }}
           >
             <span

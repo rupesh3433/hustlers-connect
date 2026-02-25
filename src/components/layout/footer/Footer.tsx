@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
     <footer className="relative w-full bg-[#0B0F19] text-gray-300">
       <div className="h-[2px] w-full bg-gradient-to-r from-blue-600 via-purple-600 to-red-500" />
 
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10 lg:px-16 py-14 sm:py-16">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 md:px-10 lg:px-16 py-8 sm:py-8">
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-y-12 md:gap-y-0 md:gap-x-16 lg:gap-x-24">
 

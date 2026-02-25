@@ -7,7 +7,7 @@ const HeroProcess: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [width, setWidth] = useState<number>(1300);
 
-  const height = 310;
+  const height = 330;
 
   useEffect(() => {
     const updateWidth = () => {
@@ -31,7 +31,16 @@ const HeroProcess: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      className="mb-35 relative w-full h-[320px] overflow-visible"
+      className="
+    relative
+    w-full
+    h-[330px]
+    overflow-visible
+    mb-0
+    sm:mb-0
+    md:mb-14
+    lg:mb-18
+  "
     >
       {/* Curve */}
       <svg
@@ -43,16 +52,10 @@ const HeroProcess: React.FC = () => {
       </svg>
 
       {/* Lines */}
-      <ConnectorLines
-        width={width}
-        height={height}
-      />
+      <ConnectorLines width={width} height={height} />
 
       {/* Labels */}
-      <ProcessData
-        width={width}
-        height={height}
-      />
+      <ProcessData width={width} height={height} />
     </div>
   );
 };

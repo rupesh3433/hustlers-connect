@@ -25,7 +25,7 @@ const ProcessCurve: React.FC<ProcessCurveProps> = ({ width, height }) => {
 
   // Slightly reduced control thickness to create taper
   const control1Offset = maxThickness * 0.1;
-  const control2Offset = maxThickness * 0.6;
+  const control2Offset = maxThickness * 0.7;
 
   const pathData = `
     M ${startX},${startY}
