@@ -12,17 +12,20 @@ const HeroParagraph: React.FC<HeroParagraphProps> = ({
   return (
     <p
       className="
-        max-w-3xl lg:max-w-4xl
+        w-full
+        max-w-[42rem]     /* controls 2-line layout */
         mx-auto
+        text-center
 
         text-[1rem]
         sm:text-[1.05rem]
         md:text-[1.1rem]
 
-        leading-[1.6]
-        text-white/70
+        leading-[1.5]
 
-        my-4
+        text-white/70
+        my-2
+        tracking-[0.01em]
       "
     >
       {text}
@@ -30,4 +33,4 @@ const HeroParagraph: React.FC<HeroParagraphProps> = ({
   );
 };
 
-export default HeroParagraph;
+export default React.memo(HeroParagraph);

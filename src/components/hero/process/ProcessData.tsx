@@ -28,7 +28,6 @@ const ProcessData: React.FC<ProcessDataProps> = ({
 
   return (
     <>
-      {/* Subtle Overlay */}
       {activeStep && (
         <div
           className="fixed inset-0 bg-black/25 md:hidden z-40"
@@ -63,27 +62,28 @@ const ProcessData: React.FC<ProcessDataProps> = ({
           >
             {/* Title */}
             <h3
-              className={`font-extrabold leading-tight tracking-tight transition-all duration-300 ${
+              className={`font-extrabold leading-tight tracking-tight ${
                 isActive
-                  ? "text-blue-400 scale-105 drop-shadow-lg"
-                  : "text-white hover:text-blue-300"
+                  ? "text-blue-400"
+                  : "text-white"
               }`}
               style={{
-                fontSize: "clamp(1rem, 2vw, 1.6rem)",
+                fontSize: "clamp(0.95rem, 1.6vw, 1.4rem)",
               }}
             >
               {step.title}
             </h3>
 
-            {/* Desktop Description */}
+            {/* Desktop + Tablet Description */}
             <p
-              className={`hidden md:block mt-2 max-w-[220px] leading-relaxed transition-all duration-300 ${
+              className={`hidden md:block mt-2 leading-relaxed ${
                 isActive
                   ? "text-white"
                   : "text-white/60"
               }`}
               style={{
-                fontSize: "clamp(0.75rem, 1vw, 0.95rem)",
+                fontSize: "clamp(0.65rem, 0.85vw, 0.85rem)",
+                maxWidth: "160px",
               }}
             >
               {step.description}
@@ -91,7 +91,7 @@ const ProcessData: React.FC<ProcessDataProps> = ({
 
             {/* Mobile Popup */}
             {isActive && (
-              <div className="md:hidden absolute bottom-full mb-3 px-4 py-3 bg-black/75 rounded-lg shadow-xl max-w-[260px] transition-all duration-300">
+              <div className="md:hidden absolute bottom-full mb-3 px-4 py-3 bg-black/75 rounded-lg shadow-xl max-w-[220px]">
                 <p className="text-white leading-relaxed text-sm">
                   {step.description}
                 </p>

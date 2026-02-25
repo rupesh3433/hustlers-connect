@@ -1,118 +1,151 @@
 // src/components/hero/texts/HeroEmailForm.tsx
 
-import React, { useState } from "react";
+import { useState } from "react";
 import ButtonCustom from "../../shared/ButtonCustom";
+import CustomInputField from "../../shared/CustomInputField";
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const HeroEmailForm: React.FC = () => {
+const HeroEmailForm = () => {
   const [email, setEmail] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
+  const [hasError, setHasError] = useState<boolean>(false);
+  const [showErrorPlaceholder, setShowErrorPlaceholder] =
+    useState<boolean>(false);
 
   const validateEmail = (value: string): boolean => {
-    if (!value.trim()) {
-      setError("Email is required");
+    const trimmed = value.trim();
+
+    if (!trimmed || !emailRegex.test(trimmed)) {
+      setHasError(true);
+      setShowErrorPlaceholder(true);
       return false;
     }
 
-    if (!emailRegex.test(value)) {
-      setError("Enter a valid email address");
-      return false;
-    }
-
-    setError("");
+    setHasError(false);
+    setShowErrorPlaceholder(false);
     return true;
   };
 
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ): Promise<void> => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    if (isLoading) return;
     if (!validateEmail(email)) return;
 
     setIsLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await new Promise<void>((resolve) =>
+        setTimeout(() => resolve(), 1200)
+      );
 
       setEmail("");
-      setError("");
-    } catch {
-      setError("Something went wrong. Try again.");
+      setHasError(false);
+      setShowErrorPlaceholder(false);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-xl" noValidate>
-      <div
-        className="
-          relative
-          rounded-full
-          backdrop-blur-xl
-          shadow-lg
-          transition-all
-          duration-300
-          focus-within:scale-[1.01]
-        "
-        style={{
-          backgroundColor: "rgba(35,35,40,0.75)",
-          border: error
-            ? "1px solid rgba(255,80,80,0.6)"
-            : "1px solid rgba(255,255,255,0.08)",
-        }}
+    <div className="relative z-50 w-full flex justify-center">
+      <form
+        onSubmit={handleSubmit}
+        noValidate
+        className="w-full max-w-md relative z-50"
       >
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            if (error) validateEmail(e.target.value);
-          }}
-          placeholder="Enter your work email"
-          disabled={isLoading}
-          aria-invalid={!!error}
+        <div
           className="
             w-full
-            pl-5
-            pr-36
-            py-3
-            rounded-full
-            text-sm
-            outline-none
-            bg-transparent
-            text-white
-            placeholder:text-white/40
-            font-medium
-            disabled:opacity-60
+            rounded-2xl
+            overflow-hidden
+            shadow-xl
+            backdrop-blur-lg
             transition-all
             duration-300
+            focus-within:scale-[1.01]
+            relative
+            z-50
+            border border-white/10
           "
-        />
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(59,130,246,0.12), rgba(139,92,246,0.12), rgba(239,68,68,0.10))",
+          }}
+        >
+          <div className="flex items-center gap-2 px-0 py-0">
+            <div className="flex-1">
+              <CustomInputField
+                type="email"
+                name="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (hasError) {
+                    setHasError(false);
+                    setShowErrorPlaceholder(false);
+                  }
+                }}
+                onFocus={() => {
+                  if (showErrorPlaceholder) {
+                    setShowErrorPlaceholder(false);
+                  }
+                }}
+                placeholder={
+                  showErrorPlaceholder
+                    ? "Invalid Email Format! Click here to re-enter."
+                    : "Enter your work email"
+                }
+                disabled={isLoading}
+                variant="glass"
+                inputSize="sm"
+                fullWidth
+                containerClassName="w-full"
+                inputClassName={`
+                  border-0
+                  bg-transparent
+                  focus:ring-0
+                  focus:outline-none
+                  focus:border-transparent
+                  !py-2
+                  px-0
+                  cursor-text
+                  ${
+                    showErrorPlaceholder
+                      ? "placeholder:text-red-500 text-red-500"
+                      : ""
+                  }
+                `}
+              />
+            </div>
 
-        <div className="absolute right-2 top-1/2 -translate-y-1/2">
-          <ButtonCustom
-            type="submit"
-            size="medium"
-            background="midnightflare"
-            isLoading={isLoading}
-            disabled={isLoading}
-            className="px-4"
-          >
-            Get Access
-          </ButtonCustom>
+            <div className="shrink-0">
+              <ButtonCustom
+                type="submit"
+                size="small"
+                background="midnightflare"
+                isLoading={isLoading}
+                disabled={isLoading}
+                className="
+                  px-0
+                  h-[36px]
+                  text-xs
+                  whitespace-nowrap
+                  border-0
+                  outline-none
+                  focus:outline-none
+                  focus:ring-0
+                  active:outline-none
+                  active:ring-0
+                "
+              >
+                Get Access
+              </ButtonCustom>
+            </div>
+          </div>
         </div>
-      </div>
-
-      {error && <p className="text-sm text-red-400 text-left px-4">{error}</p>}
-
-      <div className="mt-4 text-sm text-white/40">
-        No credit card required • Free 14-day trial
-      </div>
-    </form>
+      </form>
+    </div>
   );
 };
 

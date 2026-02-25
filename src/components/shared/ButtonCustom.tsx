@@ -1,4 +1,8 @@
-import React from "react";
+import React, { useCallback, useRef, useState } from "react";
+
+/* =========================================================
+   TYPES
+========================================================= */
 
 type ButtonVariant = "solid" | "outline" | "ghost";
 
@@ -21,14 +25,27 @@ type ButtonBackground =
   | "midnightflare";
 
 interface ButtonCustomProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onClick"> {
   children: React.ReactNode;
   variant?: ButtonVariant;
   size?: ButtonSize;
   background?: ButtonBackground;
   fullWidth?: boolean;
   isLoading?: boolean;
+
+  /* Enhanced Controls */
+  enableRipple?: boolean;
+  enablePressAnimation?: boolean;
+  enableFocusRing?: boolean;
+
+  onClick?: (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => void | Promise<void>;
 }
+
+/* =========================================================
+   COMPONENT
+========================================================= */
 
 const ButtonCustom: React.FC<ButtonCustomProps> = ({
   children,
@@ -40,17 +57,49 @@ const ButtonCustom: React.FC<ButtonCustomProps> = ({
   disabled = false,
   className = "",
   type = "button",
+
+  enableRipple = false,
+  enablePressAnimation = true,
+  enableFocusRing = false,
+
+  onClick,
   ...props
 }) => {
+  const [isPressed, setIsPressed] = useState<boolean>(false);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+
+  const isDisabled = disabled || isLoading;
+
   /* =======================================================
-     BASE STYLES
+     BASE STYLES (NO RING, NO OUTLINE BY DEFAULT)
   ======================================================== */
-  const baseStyles =
-    "relative inline-flex items-center justify-center gap-2 font-semibold rounded-full transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-60 disabled:cursor-not-allowed whitespace-nowrap";
+
+  const baseStyles = `
+    relative
+    inline-flex
+    items-center
+    justify-center
+    gap-2
+    font-semibold
+    rounded-full
+    transition-all
+    duration-200
+    ease-out
+    whitespace-nowrap
+    outline-none
+    border-0
+    focus:outline-none
+    focus:ring-0
+    active:outline-none
+    active:ring-0
+    disabled:opacity-60
+    disabled:cursor-not-allowed
+  `;
 
   /* =======================================================
      SIZE SYSTEM
   ======================================================== */
+
   const sizeStyles: Record<ButtonSize, string> = {
     small: "px-3 py-1 text-[10px] leading-tight sm:text-xs",
     medium: "px-4 py-2 text-sm sm:text-base",
@@ -62,56 +111,49 @@ const ButtonCustom: React.FC<ButtonCustomProps> = ({
   /* =======================================================
      BACKGROUND SYSTEM
   ======================================================== */
+
   const backgroundStyles: Record<ButtonBackground, string> = {
-    blue:
-      "bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500",
-
-    red:
-      "bg-red-600 hover:bg-red-700 text-white focus:ring-red-500",
-
-    green:
-      "bg-green-600 hover:bg-green-700 text-white focus:ring-green-500",
-
-    yellow:
-      "bg-yellow-400 hover:bg-yellow-500 text-black focus:ring-yellow-400",
-
-    white:
-      "bg-white hover:bg-gray-100 text-black focus:ring-gray-300",
-
-    black:
-      "bg-black hover:bg-neutral-800 text-white focus:ring-neutral-600",
-
-    grey:
-      "bg-gray-600 hover:bg-gray-700 text-white focus:ring-gray-500",
-
+    blue: "bg-blue-600 hover:bg-blue-700 text-white",
+    red: "bg-red-600 hover:bg-red-700 text-white",
+    green: "bg-green-600 hover:bg-green-700 text-white",
+    yellow: "bg-yellow-400 hover:bg-yellow-500 text-black",
+    white: "bg-white hover:bg-gray-100 text-black",
+    black: "bg-black hover:bg-neutral-800 text-white",
+    grey: "bg-gray-600 hover:bg-gray-700 text-white",
     mybuttontheme:
-      "bg-gradient-to-r from-purple-600 via-violet-600 to-pink-500 text-white shadow-lg hover:scale-[1.05] active:scale-[0.96] focus:ring-purple-500",
-
+      "bg-gradient-to-r from-purple-600 via-violet-600 to-pink-500 text-white shadow-lg",
     midnightflare:
-      "bg-gradient-to-r from-[#1E3A8A] via-[#7C3AED] to-[#991B1B] text-white shadow-lg hover:scale-[1.05] active:scale-[0.96] focus:ring-[#7C3AED]",
+      "bg-gradient-to-r from-[#1E3A8A] via-[#7C3AED] to-[#991B1B] text-white shadow-lg",
   };
 
   /* =======================================================
-     VARIANTS
+     VARIANT SYSTEM
   ======================================================== */
+
   const variantStyles: Record<ButtonVariant, string> = {
     solid: "",
-
-    outline:
-      "bg-transparent border border-current hover:bg-white/10",
-
-    ghost:
-      "bg-transparent hover:bg-white/10",
+    outline: "bg-transparent border border-current hover:bg-white/10",
+    ghost: "bg-transparent hover:bg-white/10",
   };
+
+  /* =======================================================
+     OPTIONAL FOCUS RING
+  ======================================================== */
+
+  const focusRingStyles = enableFocusRing
+    ? "focus:ring-2 focus:ring-white/50"
+    : "";
 
   /* =======================================================
      WIDTH
   ======================================================== */
+
   const widthStyles = fullWidth ? "w-full" : "w-auto";
 
   /* =======================================================
      SPINNER SIZE
   ======================================================== */
+
   const spinnerSizeMap: Record<ButtonSize, string> = {
     small: "h-3 w-3 border-2",
     medium: "h-4 w-4 border-2",
@@ -120,18 +162,74 @@ const ButtonCustom: React.FC<ButtonCustomProps> = ({
     largest: "h-7 w-7 border-[3px]",
   };
 
-  const isDisabled = disabled || isLoading;
+  /* =======================================================
+     CLICK HANDLER
+  ======================================================== */
+
+  const handleClick = useCallback(
+    async (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (isDisabled) return;
+
+      if (enablePressAnimation) {
+        setIsPressed(true);
+        setTimeout(() => setIsPressed(false), 120);
+      }
+
+      if (onClick) {
+        await onClick(event);
+      }
+    },
+    [enablePressAnimation, isDisabled, onClick]
+  );
+
+  /* =======================================================
+     RIPPLE EFFECT
+  ======================================================== */
+
+  const handleRipple = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ): void => {
+    if (!enableRipple || !buttonRef.current) return;
+
+    const button = buttonRef.current;
+    const circle = document.createElement("span");
+    const diameter = Math.max(button.clientWidth, button.clientHeight);
+    const radius = diameter / 2;
+
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
+    circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
+    circle.className =
+      "absolute bg-white/30 rounded-full animate-ping pointer-events-none";
+
+    button.appendChild(circle);
+
+    setTimeout(() => {
+      circle.remove();
+    }, 400);
+  };
+
+  /* =======================================================
+     RENDER
+  ======================================================== */
 
   return (
     <button
+      ref={buttonRef}
       type={type}
       disabled={isDisabled}
+      onClick={(e) => {
+        handleRipple(e);
+        handleClick(e);
+      }}
       className={`
         ${baseStyles}
         ${sizeStyles[size]}
         ${backgroundStyles[background]}
         ${variantStyles[variant]}
+        ${focusRingStyles}
         ${widthStyles}
+        ${enablePressAnimation && isPressed ? "scale-95" : ""}
         ${className}
       `}
       {...props}

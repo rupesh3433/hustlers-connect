@@ -18,10 +18,10 @@ export interface CurveParams {
    * ===== Global Layout Controls =====
    */
   
-  export const CURVE_EDGE_GAP = 0.2;
-  export const LABEL_PLANE_RATIO = 0.90;
+  export const CURVE_EDGE_GAP = 0.15;
+  export const LABEL_PLANE_RATIO = 0.8;
   export const LABEL_VISUAL_OFFSET = 8;
-  export const CURVE_VERTICAL_OFFSET_RATIO = -0.3;
+  export const CURVE_VERTICAL_OFFSET_RATIO = -0.2;
   
   /**
    * NEW: Controls how wide the curve is
@@ -29,7 +29,7 @@ export interface CurveParams {
    * 0.8 = 80% width
    * 0.6 = compact
    */
-  export const CURVE_WIDTH_RATIO = 1;
+  export const CURVE_WIDTH_RATIO = 0.9;
   
   /**
    * ===== Curve Generator =====
@@ -50,19 +50,19 @@ export interface CurveParams {
     return {
       // Bottom-left (centered within allowed width)
       startX,
-      startY: height * 1 + verticalOffset,
+      startY: height * 0.9 + verticalOffset,
   
       // Control 1
-      control1X: startX + curveWidth * 0.15,
+      control1X: startX + curveWidth * 0.35,
       control1Y: height * 0.9 + verticalOffset,
   
       // Control 2
       control2X: startX + curveWidth * 0.85,
-      control2Y: height * 1.2 + verticalOffset,
+      control2Y: height * 0.9 + verticalOffset,
   
       // End
       endX,
-      endY: height * 0.15 + verticalOffset,
+      endY: height * 0.25 + verticalOffset,
     };
   };
   

@@ -9,7 +9,7 @@ const HeroSection: React.FC = () => {
 
         <HeroTexts />
 
-        <div className="relative -mt-20 md:-mt-38">
+        <div className="relative -mt-40 md:-mt-55">
           <HeroProcess />
         </div>
 
