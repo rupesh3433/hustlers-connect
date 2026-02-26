@@ -4,11 +4,14 @@
 
 import React from "react";
 import type { ServiceItem } from "./services.data";
+import { SERVICES } from "./services.data";
 
 interface Props {
   service: ServiceItem;
   isMobile: boolean;
 }
+
+const TOTAL = String(SERVICES.length).padStart(2, "0"); // "06" — auto-tracks array length
 
 const ServiceContent: React.FC<Props> = ({ service: s, isMobile }) => (
   <div
@@ -46,7 +49,8 @@ const ServiceContent: React.FC<Props> = ({ service: s, isMobile }) => (
     {/* Accent vertical stripe + ID badge */}
     <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: isMobile ? 10 : 14 }}>
       <div style={{
-        width: 3, height: isMobile ? 32 : 44,
+        width: 3,
+        height: isMobile ? 32 : 44,
         borderRadius: 2,
         background: `linear-gradient(180deg, ${s.accent}, ${s.accentDim})`,
         boxShadow: `0 0 14px ${s.accent}88`,
@@ -60,7 +64,7 @@ const ServiceContent: React.FC<Props> = ({ service: s, isMobile }) => (
         color: s.accent,
         opacity: 0.75,
       }}>
-        {String(s.id).padStart(2, "0")} / 04
+        {String(s.id).padStart(2, "0")} / {TOTAL}
       </span>
     </div>
 
