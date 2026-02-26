@@ -8,11 +8,11 @@ import ContactSection from "../components/indexcomponents/ContactSection";
 import Footer from "../components/indexcomponents/Footer";
 import type { SectionScrollerHandle } from "./SectionScroller";
 import SectionScroller from "./SectionScroller";
+import ThemeBackground from "../components/shared/ThemeBackground";
 
-
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  ✦ SCROLL SETTINGS
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 const SCROLL_SETTINGS = {
   scrollThreshold:     280,
@@ -26,7 +26,7 @@ const SCROLL_SETTINGS = {
   zoomSettleDelay:     150,
 } as const;
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────
 
 const Index: FC = () => {
   const scrollerRef = useRef<SectionScrollerHandle>(null);
@@ -36,21 +36,31 @@ const Index: FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-[#010106] overflow-hidden">
-      
-      {/* ✅ Pass required prop */}
-      <Navbar onNavigate={handleNavigate} />
+    /*
+      Root div is intentionally transparent — ThemeBackground renders
+      all background layers (colour, grid, glows) as fixed elements
+      behind everything else. Edit ThemeBackground.tsx to change look.
+    */
+    <div className="fixed inset-0 overflow-hidden" style={{ background: "transparent" }}>
 
-      <SectionScroller
-        ref={scrollerRef}
-        {...SCROLL_SETTINGS}
-        sections={[
-          <HeroSection key="hero" />,
-          <ServicesSection key="services" />,
-          <ContactSection key="contact" />,
-          <Footer key="footer" />,
-        ]}
-      />
+      {/* ✅ All background theming lives here — one place to edit */}
+      <ThemeBackground />
+
+      {/* UI layers sit above the background (z-index > 3) */}
+      <div className="relative" style={{ zIndex: 10, height: "100%" }}>
+        <Navbar onNavigate={handleNavigate} />
+
+        <SectionScroller
+          ref={scrollerRef}
+          {...SCROLL_SETTINGS}
+          sections={[
+            <HeroSection key="hero" />,
+            <ServicesSection key="services" />,
+            <ContactSection key="contact" />,
+            <Footer key="footer" />,
+          ]}
+        />
+      </div>
     </div>
   );
 };

@@ -1,8 +1,39 @@
 @import "tailwindcss";
 
 /* ============================================================
-   CLEAN GLOBAL BASE
+   ✅ CRITICAL FIX — TAILWIND v4 DARK MODE
+   Without this line, ALL dark: classes are completely ignored.
+   This tells Tailwind: activate dark: variants when <html> has
+   the "dark" class — which ThemeContext already toggles correctly.
 ============================================================ */
+@variant dark (&:where(.dark, .dark *));
+
+/* ============================================================
+   ROOT THEME VARIABLES
+============================================================ */
+
+:root {
+  --bg-primary:   #ffffff;
+  --text-primary: #111827;
+  --text-muted:   #6b7280;
+}
+
+/* Dark theme override (activated via html.dark) */
+html.dark {
+  --bg-primary:   #010106;
+  --text-primary: #e5e7eb;
+  --text-muted:   #9ca3af;
+}
+
+/* ============================================================
+   GLOBAL BASE RESET
+============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
 html,
 body {
@@ -10,47 +41,69 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  background-color: #010106;
+
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overscroll-behavior-y: none;
+
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease;
+}
+
+/* Prevent white flash before theme loads */
+html.dark body {
+  background-color: #010106;
 }
 
 /* ============================================================
-   SCROLL SNAP — REMOVED FROM GLOBAL
-   ─────────────────────────────────────────────────────────
-   scroll-snap-type and scroll-snap-align are now set inline
-   on <main> and each <section> inside Index.tsx only.
-   This way other pages/routes are completely unaffected.
-   See Index.tsx → mainRef inline style + section style props.
+   REMOVE DEFAULT LINK STYLES
 ============================================================ */
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
 
 /* ============================================================
    HIDE SCROLLBAR (SCROLL STILL WORKS)
 ============================================================ */
 
-/* Chrome, Edge, Safari */
 ::-webkit-scrollbar {
   width: 0px;
   height: 0px;
 }
 
-/* Firefox */
 html {
   scrollbar-width: none;
-}
-
-/* IE / Legacy Edge */
-html {
   -ms-overflow-style: none;
 }
 
 /* ============================================================
-   OPTIONAL PERFORMANCE OPTIMIZATION
+   PERFORMANCE OPTIMIZATION FOR SNAP SECTIONS
 ============================================================ */
 
 .snap-section {
   will-change: transform;
   backface-visibility: hidden;
   transform: translateZ(0);
+}
+
+/* ============================================================
+   SMOOTH THEME TRANSITION FOR ALL COMMON ELEMENTS
+   NOTE: Blue + Purple + Red accent colours are NOT touched here.
+   Only structural backgrounds and text inherit the theme.
+============================================================ */
+
+section,
+nav,
+footer,
+div {
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease,
+    border-color 0.5s ease;
 }

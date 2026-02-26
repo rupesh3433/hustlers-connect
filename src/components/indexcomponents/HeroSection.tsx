@@ -6,18 +6,13 @@ import HeroProcess from "../hero/process/HeroProcess";
 
 const HeroSection: React.FC = () => {
   return (
-    /*
-      `h-full`      — fills sectionH given by SectionScroller, no gap
-      `bg-[#010106] — explicit background matches root, covers any
-                      transparent child gaps that would show as black
-      `overflow-visible` — keeps glow effects from clipping
-    */
+    // ✅ bg-transparent — ThemeBackground handles all background theming
     <section
       className="
         relative
         w-full
         h-full
-        bg-[#010106]
+        bg-transparent
         pt-16
         sm:pt-18
         md:pt-20

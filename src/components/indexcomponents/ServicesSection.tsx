@@ -65,7 +65,6 @@ const ServicesSection: React.FC = () => {
   const { realIdx, go, selectService, trackStyle, onTransitionEnd, touchHandlers, pauseAuto, resumeAuto } = carousel;
   const svc = SERVICES[realIdx];
 
-  // scroll wheel — boundary pass-through logic lives in makeWheelHandler
   const getRealIdx = useRef(() => realIdx);
   getRealIdx.current = () => realIdx;
   useEffect(() => {
@@ -82,17 +81,28 @@ const ServicesSection: React.FC = () => {
     <section
       ref={rootRef}
       style={{
-        position: "relative", width: "100%", height: "100%",
-        background: "#030309", display: "flex", flexDirection: "column",
-        overflow: "hidden", fontFamily: "'DM Sans', sans-serif",
-        opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(20px)",
+        position: "relative",
+        width: "100%",
+        height: "100%",
+        // ✅ transparent — ThemeBackground (in Index.tsx) owns all bg colour + grid
+        background: "transparent",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        fontFamily: "'DM Sans', sans-serif",
+        opacity: visible ? 1 : 0,
+        transform: visible ? "none" : "translateY(20px)",
         transition: "opacity 650ms ease, transform 750ms cubic-bezier(.22,1,.36,1)",
       }}
       onMouseEnter={pauseAuto}
       onMouseLeave={resumeAuto}
       {...touchHandlers}
     >
-      {/* Ambient glow */}
+      {/*
+        Ambient glow — uses each service's own accent colour (blue / purple / red).
+        This is section-specific, NOT part of ThemeBackground, so it stays here.
+        The glow blends on top of whatever ThemeBackground renders underneath.
+      */}
       <div style={{
         position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0,
         background: `
@@ -101,13 +111,6 @@ const ServicesSection: React.FC = () => {
           radial-gradient(ellipse 70% 40% at 50% 100%, ${svc.accentDim}08 0%, transparent 50%)
         `,
         transition: "background 900ms ease",
-      }} />
-
-      {/* Grid texture */}
-      <div style={{
-        position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0,
-        backgroundImage: `linear-gradient(rgba(255,255,255,.011) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.011) 1px,transparent 1px)`,
-        backgroundSize: "48px 48px",
       }} />
 
       {/* ── Composed UI ─────────────────────────────────────────────────── */}
