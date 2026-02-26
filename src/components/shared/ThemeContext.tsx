@@ -1,7 +1,6 @@
 import {
     createContext,
     useContext,
-    useEffect,
     useState,
     type ReactNode,
   } from "react";
@@ -18,37 +17,48 @@ import {
     undefined
   );
   
-  export function ThemeProvider({ children }: { children: ReactNode }) {
-    const [theme, setThemeState] = useState<Theme>("dark");
+  /**
+   * Determine theme immediately on first render.
+   * This prevents dark→light flash.
+   */
+  function getInitialTheme(): Theme {
+    if (typeof window === "undefined") return "dark";
   
-    // Load saved theme
-    useEffect(() => {
+    try {
       const saved = localStorage.getItem("theme") as Theme | null;
   
-      if (saved) {
-        setThemeState(saved);
-        document.documentElement.classList.toggle(
-          "dark",
-          saved === "dark"
-        );
-      } else {
-        // Default to dark (your project base)
-        document.documentElement.classList.add("dark");
+      if (saved === "light" || saved === "dark") {
+        return saved;
       }
-    }, []);
   
-    const setTheme = (newTheme: Theme) => {
-      setThemeState(newTheme);
-      localStorage.setItem("theme", newTheme);
+      // fallback to system preference
+      return window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+    } catch {
+      return "dark";
+    }
+  }
   
+  export function ThemeProvider({ children }: { children: ReactNode }) {
+    const [theme, setThemeState] = useState<Theme>(getInitialTheme);
+  
+    const applyThemeToDOM = (newTheme: Theme) => {
       document.documentElement.classList.toggle(
         "dark",
         newTheme === "dark"
       );
     };
   
+    const setTheme = (newTheme: Theme) => {
+      setThemeState(newTheme);
+      localStorage.setItem("theme", newTheme);
+      applyThemeToDOM(newTheme);
+    };
+  
     const toggleTheme = () => {
-      setTheme(theme === "dark" ? "light" : "dark");
+      const next = theme === "dark" ? "light" : "dark";
+      setTheme(next);
     };
   
     return (

@@ -121,6 +121,7 @@ const DynamicCount: React.FC<
     return STATS.map((stat, index) => (
       <React.Fragment key={stat.label}>
         <div className="flex flex-col items-center gap-1">
+          {/* Counter */}
           <span
             className="
               text-[clamp(20px,2.2vw,22px)]
@@ -141,13 +142,15 @@ const DynamicCount: React.FC<
             />
           </span>
 
+          {/* Label */}
           <span
             className="
               text-[9px]
               uppercase
               tracking-wide
               leading-[1.1]
-              text-white/30
+              text-black/40
+              dark:text-white/30
             "
           >
             {stat.label}
@@ -155,7 +158,7 @@ const DynamicCount: React.FC<
         </div>
 
         {index < STATS.length - 1 && (
-          <div className="w-px h-5 bg-white/10" />
+          <div className="w-px h-5 bg-black/10 dark:bg-white/10" />
         )}
       </React.Fragment>
     ));
@@ -166,7 +169,18 @@ const DynamicCount: React.FC<
       ref={containerRef}
       className={`w-full flex flex-col items-center text-center gap-1 ${className}`}
     >
-      <p className="text-[10px] font-bold text-white/35 tracking-[0.35em] leading-[1.1] uppercase">
+      {/* Top Text */}
+      <p
+        className="
+          text-[10px]
+          font-bold
+          tracking-[0.35em]
+          leading-[1.1]
+          uppercase
+          text-black/45
+          dark:text-white/35
+        "
+      >
         Generating...
       </p>
 

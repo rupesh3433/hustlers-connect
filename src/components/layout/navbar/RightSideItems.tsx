@@ -40,7 +40,9 @@ const RightSideItems: React.FC<RightSideItemsProps> = ({
             className={`
               absolute inset-0
               transition-all duration-300
-              ${theme === "dark" ? "opacity-0 rotate-90 scale-75" : "opacity-100 rotate-0 scale-100"}
+              ${theme === "dark"
+                ? "opacity-0 rotate-90 scale-75"
+                : "opacity-100 rotate-0 scale-100"}
             `}
           />
           <Moon
@@ -48,7 +50,9 @@ const RightSideItems: React.FC<RightSideItemsProps> = ({
             className={`
               absolute inset-0
               transition-all duration-300
-              ${theme === "dark" ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-75"}
+              ${theme === "dark"
+                ? "opacity-100 rotate-0 scale-100"
+                : "opacity-0 -rotate-90 scale-75"}
             `}
           />
         </div>
@@ -69,40 +73,55 @@ const RightSideItems: React.FC<RightSideItemsProps> = ({
         </ButtonCustom>
       </div>
 
-      {/* Hamburger */}
+      {/* Hamburger / Close */}
       <button
         onClick={onToggleMobile}
-        className="
-          lg:hidden
-          p-2
-          text-gray-800 dark:text-white
-          focus:outline-none
-          focus:ring-0
-        "
         aria-label="Menu"
+        className="lg:hidden group focus:outline-none focus:ring-0"
       >
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+        <div
+          className={`
+            w-9 h-9
+            flex items-center justify-center
+            rounded-full
+            transition-all duration-300
+            ${
+              mobileOpen
+                ? "bg-red-600 text-white scale-105"
+                : "bg-transparent text-gray-800 dark:text-white"
+            }
+          `}
         >
-          {mobileOpen ? (
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          ) : (
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          )}
-        </svg>
+          <svg
+            className={`
+              w-5 h-5
+              transition-transform duration-500 ease-out
+              ${
+                mobileOpen
+                  ? "rotate-[720deg]"         // 2 quick spins when opening
+                  : "group-hover:rotate-[360deg]"  // 1 spin on hover
+              }
+            `}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            {mobileOpen ? (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            ) : (
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            )}
+          </svg>
+        </div>
       </button>
     </div>
   );

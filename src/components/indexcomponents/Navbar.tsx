@@ -1,5 +1,3 @@
-// src/components/indexcomponents/Navbar.tsx
-
 import React, { useEffect, useState } from "react";
 import NavLinks from "../layout/navbar/NavLinks";
 import NavMenuBar from "../layout/navbar/NavMenuBar";
@@ -43,9 +41,15 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
         h-16 md:h-20
         z-[10000]
         transition-all duration-500
+        text-[color:var(--text-primary)]
         ${
           scrolled
-            ? "bg-[#0b0b12]/80 backdrop-blur-md border-b border-white/10"
+            ? `
+              bg-[color:var(--bg-primary)]/80
+              backdrop-blur-md
+              border-b
+              border-black/10 dark:border-white/10
+            `
             : "bg-transparent border-b border-transparent"
         }
       `}
@@ -64,7 +68,6 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
         />
       </div>
 
-      {/* ✅ Glass Dropdown Only (No Fullscreen Overlay) */}
       <NavMenuBar
         navItems={navItems}
         isOpen={mobileOpen}

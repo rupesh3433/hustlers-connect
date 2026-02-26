@@ -1,15 +1,12 @@
-// CustomInputField.tsx
-
 import {
   forwardRef,
   useId,
-  useState,
   type InputHTMLAttributes,
   type ReactNode,
   type FocusEvent,
 } from "react";
 
-type InputVariant = "default" | "glass" | "underline";
+type InputVariant = "default" | "glass" | "underline" | "plain";
 type InputSize = "sm" | "md" | "lg";
 
 interface CustomInputFieldProps
@@ -28,9 +25,8 @@ interface CustomInputFieldProps
 
 type ClassValue = string | false | undefined;
 
-const mergeClasses = (...classes: ClassValue[]): string => {
-  return classes.filter((cls): cls is string => typeof cls === "string" && cls.length > 0).join(" ");
-};
+const mergeClasses = (...classes: ClassValue[]): string =>
+  classes.filter((cls): cls is string => !!cls).join(" ");
 
 const SIZE_STYLES: Record<
   InputSize,
@@ -44,21 +40,21 @@ const SIZE_STYLES: Record<
 > = {
   sm: {
     container: "gap-1",
-    input: "px-3 py-2 text-sm rounded-lg",
+    input: "px-3 py-2 text-sm",
     label: "text-xs font-medium",
     helper: "text-xs",
     icon: "h-4 w-4",
   },
   md: {
     container: "gap-1.5",
-    input: "px-4 py-2.5 text-sm sm:text-base rounded-xl",
+    input: "px-4 py-2.5 text-sm sm:text-base",
     label: "text-sm font-semibold",
     helper: "text-xs sm:text-sm",
     icon: "h-5 w-5",
   },
   lg: {
     container: "gap-2",
-    input: "px-5 py-3 text-base sm:text-lg rounded-2xl",
+    input: "px-5 py-3 text-base sm:text-lg",
     label: "text-base font-semibold",
     helper: "text-sm",
     icon: "h-6 w-6",
@@ -75,27 +71,36 @@ const VARIANT_STYLES: Record<
 > = {
   default: {
     base:
-      "bg-white/90 border border-slate-300 shadow-sm backdrop-blur-sm",
+      "bg-[color:var(--bg-primary)]/70 border border-black/10 dark:border-white/10 text-[color:var(--text-primary)] placeholder:text-[color:var(--text-primary)]/50",
     focus:
       "focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20",
     error:
       "border-red-500 focus:border-red-500 focus:ring-red-500/20",
   },
+
   glass: {
     base:
-      "bg-white/10 border border-white/20 backdrop-blur-xl shadow-lg text-white placeholder:text-white/60",
+      "bg-white/50 dark:bg-white/10 border border-black/10 dark:border-white/20 backdrop-blur-xl text-[color:var(--text-primary)] placeholder:text-[color:var(--text-primary)]/60",
     focus:
       "focus:border-purple-400 focus:ring-4 focus:ring-purple-400/30",
     error:
       "border-red-400 focus:border-red-400 focus:ring-red-400/30",
   },
+
   underline: {
     base:
-      "bg-transparent border-0 border-b-2 border-slate-300 rounded-none px-0",
+      "bg-transparent border-0 border-b-2 border-black/20 dark:border-white/30 rounded-none px-0 text-[color:var(--text-primary)] placeholder:text-[color:var(--text-primary)]/50",
     focus:
       "focus:border-purple-500 focus:ring-0",
     error:
       "border-red-500 focus:border-red-500 focus:ring-0",
+  },
+
+  plain: {
+    base:
+      "bg-transparent border-0 shadow-none text-[color:var(--text-primary)] placeholder:text-[color:var(--text-primary)]/50",
+    focus: "focus:ring-0 focus:border-0",
+    error: "focus:ring-0",
   },
 };
 
@@ -127,18 +132,15 @@ const CustomInputField = forwardRef<HTMLInputElement, CustomInputFieldProps>(
     const sizeStyle = SIZE_STYLES[inputSize];
     const variantStyle = VARIANT_STYLES[variant];
 
-    const [isFocused, setIsFocused] = useState(false);
     const hasError = Boolean(error);
     const isUnderline = variant === "underline";
 
     const handleFocus = (e: FocusEvent<HTMLInputElement>) => {
-      setIsFocused(true);
-      if (onFocus) onFocus(e);
+      onFocus?.(e);
     };
 
     const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
-      setIsFocused(false);
-      if (onBlur) onBlur(e);
+      onBlur?.(e);
     };
 
     return (
@@ -150,35 +152,33 @@ const CustomInputField = forwardRef<HTMLInputElement, CustomInputFieldProps>(
           containerClassName
         )}
       >
-        {label ? (
+        {label && (
           <label
             htmlFor={inputId}
             className={mergeClasses(
               sizeStyle.label,
               hasError
                 ? "text-red-600"
-                : "text-slate-700 dark:text-slate-200"
+                : "text-[color:var(--text-primary)]"
             )}
           >
             {label}
-            {required ? (
-              <span className="ml-1 text-red-500">*</span>
-            ) : undefined}
+            {required && <span className="ml-1 text-red-500">*</span>}
           </label>
-        ) : undefined}
+        )}
 
-        <div className="relative flex items-center">
-          {leftIcon ? (
+        <div className="relative flex items-center h-full">
+          {leftIcon && (
             <div
               className={mergeClasses(
-                "absolute left-3 flex items-center justify-center pointer-events-none text-slate-400",
+                "absolute left-3 flex items-center justify-center pointer-events-none text-[color:var(--text-primary)]/50",
                 sizeStyle.icon,
                 disabled ? "opacity-50" : undefined
               )}
             >
               {leftIcon}
             </div>
-          ) : undefined}
+          )}
 
           <input
             id={inputId}
@@ -189,61 +189,50 @@ const CustomInputField = forwardRef<HTMLInputElement, CustomInputFieldProps>(
             onFocus={handleFocus}
             onBlur={handleBlur}
             className={mergeClasses(
-              "w-full outline-none transition-all duration-200 ease-in-out",
+              "w-full h-full outline-none transition-all duration-200 ease-in-out",
               sizeStyle.input,
               variantStyle.base,
               !isUnderline ? "rounded-xl" : undefined,
               leftIcon && !isUnderline ? "pl-10" : undefined,
               rightIcon && !isUnderline ? "pr-10" : undefined,
-              disabled
-                ? "opacity-60 cursor-not-allowed bg-slate-100"
-                : undefined,
-              hasError
-                ? variantStyle.error
-                : variantStyle.focus,
-              isFocused ? "ring-offset-0" : undefined,
+              disabled ? "opacity-60 cursor-not-allowed" : undefined,
+              hasError ? variantStyle.error : variantStyle.focus,
               inputClassName
             )}
             {...rest}
           />
 
-          {rightIcon ? (
+          {rightIcon && (
             <div
               className={mergeClasses(
-                "absolute right-3 flex items-center justify-center text-slate-400",
+                "absolute right-3 flex items-center justify-center text-[color:var(--text-primary)]/50",
                 sizeStyle.icon,
                 disabled ? "opacity-50" : undefined
               )}
             >
               {rightIcon}
             </div>
-          ) : undefined}
+          )}
         </div>
 
         {hasError ? (
-          <p
-            className={mergeClasses(
-              sizeStyle.helper,
-              "text-red-600 font-medium"
-            )}
-          >
+          <p className={mergeClasses(sizeStyle.helper, "text-red-600 font-medium")}>
             {error}
           </p>
         ) : helperText ? (
           <p
             className={mergeClasses(
               sizeStyle.helper,
-              "text-slate-500 dark:text-slate-400"
+              "text-[color:var(--text-primary)]/60"
             )}
           >
             {helperText}
           </p>
-        ) : undefined}
+        ) : null}
       </div>
     );
   }
 );
 
 CustomInputField.displayName = "CustomInputField";
-
 export default CustomInputField;

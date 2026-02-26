@@ -1,5 +1,3 @@
-// src/components/hero/texts/HeroEmailForm.tsx
-
 import { useState } from "react";
 import ButtonCustom from "../../shared/ButtonCustom";
 import CustomInputField from "../../shared/CustomInputField";
@@ -15,12 +13,10 @@ const HeroEmailForm = () => {
 
   const validateEmail = (value: string): boolean => {
     const trimmed = value.trim();
-
     if (!trimmed || !emailRegex.test(trimmed)) {
       setShowErrorPlaceholder(true);
       return false;
     }
-
     setShowErrorPlaceholder(false);
     return true;
   };
@@ -38,7 +34,6 @@ const HeroEmailForm = () => {
       await new Promise<void>((resolve) =>
         setTimeout(resolve, 1200)
       );
-
       setEmail("");
       setShowErrorPlaceholder(false);
     } finally {
@@ -50,90 +45,76 @@ const HeroEmailForm = () => {
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="w-full max-w-xs"
+      className="w-full max-w-lg"
     >
       <div
         className="
+          group
           w-full
+          h-[40px]
           flex
-          items-center
-          rounded-xl
+          items-stretch
+          rounded-full
           overflow-hidden
-          shadow-lg
           backdrop-blur-md
-          border border-white/10
+          border
+          border-black/10 dark:border-white/15
+          bg-[color:var(--bg-primary)]/75
+          shadow-md
           transition-all
           duration-300
+          focus-within:border-purple-500/40
         "
-        style={{
-          background:
-            "linear-gradient(135deg, rgba(59,130,246,0.10), rgba(139,92,246,0.10), rgba(239,68,68,0.08))",
-        }}
       >
-        {/* Input */}
-        <CustomInputField
-          type="email"
-          name="email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            if (showErrorPlaceholder) {
-              setShowErrorPlaceholder(false);
-            }
-          }}
-          onFocus={() => {
-            if (showErrorPlaceholder) {
-              setShowErrorPlaceholder(false);
-            }
-          }}
-          placeholder={
-            showErrorPlaceholder
-              ? "Invalid Email"
-              : "Work email"
-          }
-          disabled={isLoading}
-          variant="glass"
-          inputSize="sm"
-          fullWidth
-          containerClassName="flex-1"
-          inputClassName={`
-            border-0
-            bg-transparent
-            focus:ring-0
-            focus:outline-none
-            px-3
-            py-1.5
-            h-[32px]
-            text-[0.8rem]
-            leading-[1.1]
-            ${
+        {/* INPUT 70% */}
+        <div className="flex-[7] h-full">
+          <CustomInputField
+            type="email"
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder={
               showErrorPlaceholder
-                ? "placeholder:text-red-500 text-red-500"
-                : ""
+                ? "Invalid Email"
+                : "Work email"
             }
-          `}
-        />
+            disabled={isLoading}
+            variant="plain"
+            inputSize="sm"
+            fullWidth
+            containerClassName="h-full"
+            inputClassName="
+              h-full
+              w-full
+              rounded-none
+              px-6
+              text-sm
+              focus:outline-none
+            "
+          />
+        </div>
 
-        {/* Button */}
-        <ButtonCustom
-          type="submit"
-          size="small"
-          background="midnightflare"
-          isLoading={isLoading}
-          disabled={isLoading}
-          className="
-            h-[32px]
-            px-3
-            text-[0.7rem]
-            leading-[1]
-            whitespace-nowrap
-            border-0
-            focus:outline-none
-            focus:ring-0
-          "
-        >
-          Access
-        </ButtonCustom>
+        {/* BUTTON 30% */}
+        <div className="flex-[3] h-full">
+          <ButtonCustom
+            type="submit"
+            size="small"
+            background="midnightflare"
+            isLoading={isLoading}
+            disabled={isLoading}
+            className="
+              h-full
+              w-full
+              rounded-none
+              border-0
+              text-sm
+              font-semibold
+              tracking-wide
+            "
+          >
+            Access
+          </ButtonCustom>
+        </div>
       </div>
     </form>
   );

@@ -1,6 +1,6 @@
 // src/components/contact/ContactInfo.tsx
 
-import type { FC } from "react";
+import { type FC, useEffect, useState } from "react";
 import ContactInfoItem from "./ContactInfoItem";
 import SocialMediaIcons from "../shared/SocialMediaIcons";
 
@@ -33,19 +33,69 @@ const INFO = [
   },
 ];
 
-const ContactInfo: FC = () => (
-  <div
-    className="flex flex-col gap-1"
-  >
-    {INFO.map((item) => (
-      <ContactInfoItem key={item.label} {...item} />
-    ))}
+const ContactInfo: FC = () => {
+  const [screen, setScreen] = useState<"mobile" | "tablet" | "laptop">(
+    "laptop"
+  );
 
-    {/* Social Icons Wrapper */}
-    <div className="flex justify-center md:justify-start mt-3">
-      <SocialMediaIcons size={30} />
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      if (w <= 768) setScreen("mobile");
+      else if (w <= 1280) setScreen("tablet");
+      else setScreen("laptop");
+    };
+
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  const gap =
+    screen === "mobile"
+      ? "0.4rem"
+      : screen === "tablet"
+      ? "0.6rem"
+      : "0.6rem";
+
+  const socialMarginTop =
+    screen === "mobile"
+      ? "0.2rem"
+      : screen === "tablet"
+      ? "1.4rem"
+      : "2.2rem";
+
+  const socialSize =
+    screen === "mobile"
+      ? 30
+      : screen === "tablet"
+      ? 38
+      : 44;
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap,
+      }}
+    >
+      {INFO.map((item) => (
+        <ContactInfoItem key={item.label} {...item} />
+      ))}
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent:
+            screen === "mobile" ? "center" : "flex-start",
+          marginTop: socialMarginTop,
+        }}
+      >
+        <SocialMediaIcons size={socialSize} />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default ContactInfo;

@@ -7,7 +7,7 @@ import ProcessData from "./ProcessData";
 import type { ScreenType } from "./curveConfig";
 
 const GEOMETRY_HEIGHT = 300;
-const VISIBLE_HEIGHT = 350;  // Changed from 360 to 650
+const VISIBLE_HEIGHT = 350;
 
 const HeroProcess: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -21,17 +21,11 @@ const HeroProcess: React.FC = () => {
       if (!entry) return;
 
       const newWidth = entry.contentRect.width;
-
-      if (newWidth > 0) {
-        setWidth(newWidth);
-      }
+      if (newWidth > 0) setWidth(newWidth);
     });
 
     observer.observe(containerRef.current);
-
-    return () => {
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
   }, []);
 
   const screen: ScreenType = useMemo(() => {
@@ -55,7 +49,11 @@ const HeroProcess: React.FC = () => {
             preserveAspectRatio="none"
             style={{ overflow: "visible" }}
           >
-            <ProcessCurve width={width} height={GEOMETRY_HEIGHT} screen={screen} />
+            <ProcessCurve
+              width={width}
+              height={GEOMETRY_HEIGHT}
+              screen={screen}
+            />
           </svg>
 
           <svg
@@ -71,7 +69,11 @@ const HeroProcess: React.FC = () => {
             />
           </svg>
 
-          <ProcessData width={width} height={GEOMETRY_HEIGHT} screen={screen} />
+          <ProcessData
+            width={width}
+            height={GEOMETRY_HEIGHT}
+            screen={screen}
+          />
         </>
       )}
     </div>

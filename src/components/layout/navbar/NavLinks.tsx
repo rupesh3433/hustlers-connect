@@ -1,11 +1,9 @@
-// src/components/layout/navbar/NavLinks.tsx
-
 import React from "react";
 import type { NavItem } from "./NavMenuBar";
 
 interface NavLinksProps {
   items: NavItem[];
-  onItemClick: (label: string) => void; // ✅ added
+  onItemClick: (label: string) => void;
 }
 
 const NavLinks: React.FC<NavLinksProps> = ({
@@ -23,8 +21,8 @@ const NavLinks: React.FC<NavLinksProps> = ({
             relative
             text-sm
             font-medium
-            text-white/70
-            hover:text-white
+            text-black/70 dark:text-white/70
+            hover:text-black dark:hover:text-white
             transition
             group
           "

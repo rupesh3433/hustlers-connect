@@ -1,70 +1,74 @@
 // src/components/indexcomponents/ContactSection.tsx
 
-import type { FC } from "react";
+import { type FC, useEffect, useState } from "react";
 import ContactHeading from "../contacts/ContactHeading";
 import ContactInfo from "../contacts/ContactInfo";
 import ContactForm from "../contacts/ContactForm";
 
-const ContactSection: FC = () => (
-  // ✅ bg-transparent — ThemeBackground handles all background theming
-  <section
-    style={{
-      position: "relative",
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      padding: "0.75rem",
-      boxSizing: "border-box",
-      overflow: "hidden",
-      background: "transparent",
-    }}
-  >
-    <div
-      className="cs-wrapper"
+const ContactSection: FC = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const update = () => setIsMobile(window.innerWidth <= 768);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  return (
+    <section
       style={{
+        position: "relative",
         width: "100%",
-        maxWidth: "960px",
-        margin: "0 auto",
+        height: "100%",
+        minHeight: "100%",
         display: "flex",
-        flexDirection: "column",
-        gap: "0.9rem",
+        justifyContent: "center",
         alignItems: "center",
+        padding: isMobile ? "0.75rem" : "1.2rem",
+        boxSizing: "border-box",
+        overflow: "hidden",
+        background: "transparent",
       }}
     >
-      <div style={{ width: "100%", textAlign: "center" }}>
-        <ContactHeading />
-      </div>
-
       <div
-        className="cs-grid"
+        className="cs-wrapper"
         style={{
           width: "100%",
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "1rem",
-          alignItems: "start",
+          maxWidth: "1100px",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
           justifyContent: "center",
+          gap: isMobile ? "0.9rem" : "1.6rem",
         }}
       >
-        <ContactInfo />
-        <ContactForm />
-      </div>
-    </div>
+        <div style={{ width: "100%", textAlign: "center" }}>
+          <ContactHeading />
+        </div>
 
-    <style>{`
-      @media (max-width: 1024px) {
-        .cs-wrapper { gap: 0.8rem !important; }
-        .cs-grid    { gap: 0.9rem !important; }
-      }
-      @media (max-width: 768px) {
-        .cs-grid    { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
-        .cs-wrapper { gap: 0.75rem !important; }
-      }
-      section::-webkit-scrollbar { display: none; }
-    `}</style>
-  </section>
-);
+        <div
+          className="cs-grid"
+          style={{
+            width: "100%",
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+            gap: isMobile ? "0.9rem" : "2.2rem",
+            alignItems: "start",
+          }}
+        >
+          <ContactInfo />
+          <ContactForm />
+        </div>
+      </div>
+
+      <style>{`
+        section::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+    </section>
+  );
+};
 
 export default ContactSection;

@@ -36,22 +36,63 @@ const ConnectorLines: React.FC<ConnectorLinesProps> = ({
     return 8;
   }, [width]);
 
-  // Single horizontal plane for all lines to end at
   const horizontalPlaneY = useMemo(() => {
     const config = CURVE_CONFIG[screen];
     const baseY = height * config.curveVerticalShift;
-    const leftMaxY = baseY + height * config.startYOffset + height * config.leftStretchDownRatio;
-    const rightMaxY = baseY + height * config.endYOffset + height * config.rightStretchDownRatio;
+
+    const leftMaxY =
+      baseY +
+      height * config.startYOffset +
+      height * config.leftStretchDownRatio;
+
+    const rightMaxY =
+      baseY +
+      height * config.endYOffset +
+      height * config.rightStretchDownRatio;
+
     const maxCurveY = Math.max(leftMaxY, rightMaxY);
-    
-    // Add offset below the curve for the horizontal plane
-    return maxCurveY + height * 0.1; // Adjust 0.1 to move plane up/down
+
+    return maxCurveY + height * 0.1;
   }, [height, screen]);
 
   const total = processSteps.length;
 
   return (
     <>
+      <defs>
+        {processSteps.map((step) => (
+          <React.Fragment key={`defs-${step.id}`}>
+            {/* Gradient for rain drop */}
+            <linearGradient
+              id={`rain-grad-${step.id}`}
+              x1="0%"
+              y1="0%"
+              x2="0%"
+              y2="100%"
+            >
+              <stop offset="0%" stopColor={step.color} stopOpacity="0" />
+              <stop offset="50%" stopColor={step.color} stopOpacity="1" />
+              <stop offset="100%" stopColor={step.color} stopOpacity="0" />
+            </linearGradient>
+
+            {/* Glow filter */}
+            <filter
+              id={`rain-glow-${step.id}`}
+              x="-50%"
+              y="-50%"
+              width="200%"
+              height="200%"
+            >
+              <feGaussianBlur stdDeviation="2.5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </React.Fragment>
+        ))}
+      </defs>
+
       {processSteps.map((step, index) => {
         const t =
           total === 1
@@ -61,25 +102,70 @@ const ConnectorLines: React.FC<ConnectorLinesProps> = ({
 
         const { x, y } = getBezierPoint(t, curveParams);
 
+        const delay = `${index * 0.4}s`;
+
         return (
           <g key={step.id}>
             {/* Dot on curve */}
             <circle cx={x} cy={y} r={dotRadius} fill={step.color} />
 
-            {/* Vertical connector line - all end at same horizontal plane */}
+            {/* Base vertical line (theme aware) */}
             <line
               x1={x}
               y1={y}
               x2={x}
               y2={horizontalPlaneY}
-              stroke="rgba(255,255,255,0.6)"
+              stroke="var(--connector-line)"
               strokeWidth={2}
               strokeDasharray="4 6"
               strokeLinecap="round"
             />
+
+            {/* Animated rain drop moving along line */}
+            <line
+              x1={x}
+              y1={y}
+              x2={x}
+              y2={horizontalPlaneY}
+              stroke={`url(#rain-grad-${step.id})`}
+              strokeWidth={3}
+              strokeLinecap="round"
+              filter={`url(#rain-glow-${step.id})`}
+              style={{
+                strokeDasharray: "12 200",
+                animation: "rainDrop 2.2s linear infinite",
+                animationDelay: delay,
+              }}
+            />
           </g>
         );
       })}
+
+      <style>
+        {`
+          :root {
+            --connector-line: rgba(0,0,0,0.25);
+          }
+
+          html.dark {
+            --connector-line: rgba(255,255,255,0.6);
+          }
+
+          @keyframes rainDrop {
+            0% {
+              stroke-dashoffset: 0;
+              opacity: 0;
+            }
+            20% {
+              opacity: 1;
+            }
+            100% {
+              stroke-dashoffset: -240;
+              opacity: 0;
+            }
+          }
+        `}
+      </style>
     </>
   );
 };

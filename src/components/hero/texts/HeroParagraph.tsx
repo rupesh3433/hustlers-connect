@@ -1,5 +1,3 @@
-// src/components/hero/texts/HeroParagraph.tsx
-
 import React from "react";
 
 interface HeroParagraphProps {
@@ -21,7 +19,7 @@ const HeroParagraph: React.FC<HeroParagraphProps> = ({
         leading-[1.3]
         tracking-[0.01em]
 
-        text-white/70
+        text-[color:var(--text-primary)]/70
       "
     >
       {text}

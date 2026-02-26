@@ -1,14 +1,52 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HustlersConnect - Hustle with Purpose. Connect with Power.</title>
-    <meta name="description" content="Digital solutions agency providing web development, AI agents, automation, digital marketing, and more." />
+    <title>
+      HustlersConnect - Hustle with Purpose. Connect with Power.
+    </title>
+    <meta
+      name="description"
+      content="Digital solutions agency providing web development, AI agents, automation, digital marketing, and more."
+    />
+
+    <!-- ========================================================== -->
+    <!--  PREVENT THEME FLASH (FOUC FIX)                            -->
+    <!--  Runs BEFORE React loads                                    -->
+    <!-- ========================================================== -->
+    <script>
+      (function () {
+        try {
+          var storedTheme = localStorage.getItem("theme");
+
+          if (storedTheme === "dark") {
+            document.documentElement.classList.add("dark");
+          } else if (storedTheme === "light") {
+            document.documentElement.classList.remove("dark");
+          } else {
+            // No stored theme → fallback to system preference
+            if (
+              window.matchMedia &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches
+            ) {
+              document.documentElement.classList.add("dark");
+            }
+          }
+        } catch (e) {
+          // Fail silently (private mode, restricted storage, etc.)
+        }
+      })();
+    </script>
+    <!-- ========================================================== -->
   </head>
-  <body>
+
+  <body class="bg-transparent">
     <div id="root"></div>
+
+    <!-- React entry -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

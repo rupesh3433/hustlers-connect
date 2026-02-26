@@ -31,11 +31,11 @@ const FooterColumns: React.FC<FooterColumnsProps> = ({
         w-full
         grid
         grid-cols-3
-        gap-x-10
-        gap-y-12
+        gap-x-6
+        gap-y-10
       "
     >
-      {validColumns.map((column) => {
+      {validColumns.slice(0, 3).map((column) => {
         const extendedLinks: NavItem[] = [
           ...column.links,
           { label: "Blog", path: "#blog" },
@@ -49,21 +49,34 @@ const FooterColumns: React.FC<FooterColumnsProps> = ({
             aria-label={`Footer ${column.title}`}
             className="min-w-0"
           >
-            <h3 className="text-white font-semibold text-base md:text-lg">
+            <h3
+              className="
+                font-semibold
+                text-sm
+                md:text-base
+                text-gray-900
+                dark:text-white
+                transition-colors
+                duration-300
+              "
+            >
               {column.title}
             </h3>
 
-            <ul className="mt-5 space-y-3">
+            <ul className="mt-4 space-y-2 md:space-y-3">
               {extendedLinks.map((item, index) => (
                 <li key={`${item.label}-${index}`}>
                   <a
                     href={item.path}
                     className="
-                      text-gray-400
-                      hover:text-white
+                      text-gray-600
+                      dark:text-gray-400
+                      hover:text-gray-900
+                      dark:hover:text-white
                       transition-colors
                       duration-200
-                      text-sm md:text-base
+                      text-xs
+                      md:text-sm
                       block
                     "
                   >

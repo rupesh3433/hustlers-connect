@@ -35,11 +35,13 @@ const LeftSideItems: React.FC<LeftSideItemsProps> = ({
         className="
           text-base
           md:text-lg
-          text-gray-400
           leading-relaxed
           md:leading-loose
           max-w-[30rem]
           md:max-w-none
+          text-gray-600
+          dark:text-gray-400
+          transition-colors duration-300
         "
       >
         {description}

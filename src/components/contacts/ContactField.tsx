@@ -31,25 +31,48 @@ import {
   }) => {
     const [focused, setFocused] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [isDark, setIsDark] = useState(false);
   
     useEffect(() => {
-      const update = () => setIsMobile(window.innerWidth <= 768);
+      const update = () => {
+        setIsMobile(window.innerWidth <= 768);
+        setIsDark(document.documentElement.classList.contains("dark"));
+      };
+  
       update();
       window.addEventListener("resize", update);
-      return () => window.removeEventListener("resize", update);
+  
+      const observer = new MutationObserver(update);
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+  
+      return () => {
+        window.removeEventListener("resize", update);
+        observer.disconnect();
+      };
     }, []);
   
     const fieldStyle: React.CSSProperties = {
       width: "100%",
       background: focused
-        ? "rgba(255,255,255,0.05)"
-        : "rgba(255,255,255,0.02)",
+        ? isDark
+          ? "rgba(255,255,255,0.06)"
+          : "rgba(0,0,0,0.04)"
+        : isDark
+        ? "rgba(255,255,255,0.03)"
+        : "rgba(0,0,0,0.02)",
       border: `1px solid ${
-        focused ? accentColor + "88" : "rgba(120,120,180,0.12)"
+        focused
+          ? accentColor + "88"
+          : isDark
+          ? "rgba(120,120,180,0.15)"
+          : "rgba(0,0,0,0.12)"
       }`,
       borderRadius: "6px",
-      padding: isMobile ? "0.45rem 0.65rem" : "0.55rem 0.8rem",
-      color: "#e8e8f0",
+      padding: isMobile ? "0.55rem 0.65rem" : "0.55rem 0.8rem",
+      color: "var(--text-primary)",
       fontSize: isMobile ? "0.75rem" : "0.82rem",
       lineHeight: 1.2,
       fontFamily: "Inter, system-ui, -apple-system, sans-serif",
@@ -66,7 +89,11 @@ import {
       fontSize: isMobile ? "0.55rem" : "0.6rem",
       letterSpacing: "0.12em",
       textTransform: "uppercase",
-      color: focused ? accentColor : "rgba(160,160,200,0.45)",
+      color: focused
+        ? accentColor
+        : isDark
+        ? "rgba(160,160,200,0.45)"
+        : "rgba(0,0,0,0.45)",
       marginBottom: "0.25rem",
       lineHeight: 1.05,
       transition: "color 0.2s",

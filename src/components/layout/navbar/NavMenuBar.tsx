@@ -1,5 +1,3 @@
-// src/components/layout/navbar/NavMenuBar.tsx
-
 import React from "react";
 import ButtonCustom from "../../shared/ButtonCustom";
 import { ArrowRight } from "lucide-react";
@@ -26,13 +24,13 @@ const NavMenuBar: React.FC<NavMenuBarProps> = ({
 
   return (
     <>
-      {/* Soft backdrop (not full dark screen) */}
+      {/* Click Outside Overlay */}
       <div
         className="lg:hidden fixed inset-0 z-[9998]"
         onClick={onClose}
       />
 
-      {/* Glass Dropdown */}
+      {/* Dropdown Panel */}
       <div
         className="
           lg:hidden
@@ -41,17 +39,28 @@ const NavMenuBar: React.FC<NavMenuBarProps> = ({
           left-4
           right-4
           z-[9999]
-          bg-[#0b0b12]/80
-          backdrop-blur-md
-          border border-white/10
           rounded-2xl
-          shadow-xl
           px-6
           py-6
           flex flex-col
           gap-6
+          transition-all duration-300
+
+          /* Glass Surface */
+          backdrop-blur-sm
+          bg-white/15
+          dark:bg-white/5
+
+          /* Border */
+          border
+          border-black/10
+          dark:border-white/10
+
+          /* Elevation */
+          shadow-xl
         "
       >
+        {/* Navigation Links */}
         <div className="flex flex-col gap-5">
           {navItems.map((item) => (
             <button
@@ -63,12 +72,11 @@ const NavMenuBar: React.FC<NavMenuBarProps> = ({
               }}
               className="
                 text-left
-                text-white/70
-                hover:text-white
-                transition-colors
-                duration-300
                 text-lg
                 font-medium
+                transition-colors duration-300
+                text-[color:var(--text-primary)]/70
+                hover:text-[color:var(--text-primary)]
               "
             >
               {item.label}
@@ -76,6 +84,7 @@ const NavMenuBar: React.FC<NavMenuBarProps> = ({
           ))}
         </div>
 
+        {/* Sign In Button */}
         <ButtonCustom
           size="medium"
           background="grey"

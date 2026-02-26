@@ -10,11 +10,11 @@ const HeroHeading: React.FC = () => {
         tracking-tight
         leading-[1.02]
 
-        text-[1.6rem]          /* mobile */
-        sm:text-[1.85rem]      /* above mobile */
-        md:text-[2.2rem]       /* tablet */
-        lg:text-[2.6rem]       /* large */
-        xl:text-[2.8rem]       /* extra large */
+        text-[1.6rem]
+        sm:text-[1.85rem]
+        md:text-[2.2rem]
+        lg:text-[2.6rem]
+        xl:text-[2.8rem]
       "
     >
       {/* Line 1 */}
@@ -22,13 +22,13 @@ const HeroHeading: React.FC = () => {
         <span className="bg-gradient-to-r from-purple-400 via-violet-400 to-pink-400 bg-clip-text text-transparent">
           Hustle
         </span>{" "}
-        <span className="text-white">
+        <span className="text-[color:var(--text-primary)]">
           with Purpose,
         </span>
       </span>
 
       {/* Line 2 */}
-      <span className="block text-white font-medium tracking-[-0.015em] whitespace-nowrap">
+      <span className="block text-[color:var(--text-primary)] font-medium tracking-[-0.015em] whitespace-nowrap">
         Connect with Power
       </span>
 

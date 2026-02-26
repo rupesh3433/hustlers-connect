@@ -15,6 +15,14 @@
 //    • All wheel/touch events passed through natively, no interception.
 //    • On zoom-out back to ≈1.0, re-snap to current section, restore mode 1.
 //
+//  PERSISTENCE
+//  ───────────
+//  The active section index survives browser refresh via localStorage.
+//  Key: STORAGE_KEY ("sectionScroller.activeIndex")
+//  Write: after every navigation animation completes (final rAF frame).
+//  Read: on first mount, before first paint — sets scrollTop directly
+//        (no animation) so there is no visible jump.
+//
 //  IMPERATIVE HANDLE
 //  ─────────────────
 //  Exposes scrollTo(index) via forwardRef + useImperativeHandle so that
@@ -29,10 +37,36 @@ import {
     forwardRef,
     useRef,
     useEffect,
+    useLayoutEffect,
     useState,
     useCallback,
     useImperativeHandle,
   } from "react";
+  
+  // ─────────────────────────────────────────────────────────────────────────────
+  //  Persistence key
+  // ─────────────────────────────────────────────────────────────────────────────
+  
+  const STORAGE_KEY = "sectionScroller.activeIndex";
+  
+  const readStoredIndex = (): number => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw === null) return 0;
+      const parsed = parseInt(raw, 10);
+      return Number.isFinite(parsed) ? parsed : 0;
+    } catch {
+      return 0;
+    }
+  };
+  
+  const writeStoredIndex = (index: number): void => {
+    try {
+      localStorage.setItem(STORAGE_KEY, String(index));
+    } catch {
+      // Storage quota exceeded or private-browsing restriction — silently ignore.
+    }
+  };
   
   // ─────────────────────────────────────────────────────────────────────────────
   //  Public handle type — import this wherever you hold a ref to SectionScroller
@@ -131,7 +165,7 @@ import {
     const mainRef            = useRef<HTMLDivElement>(null);
     const rafRef             = useRef<number | null>(null);
     const isAnimating        = useRef<boolean>(false);
-    const currentIdx         = useRef<number>(0);
+    const currentIdx         = useRef<number>(0);          // authoritative index
     const accumulator        = useRef<number>(0);
     const decayTimerRef      = useRef<ReturnType<typeof setTimeout> | null>(null);
     const zoomSettleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -156,6 +190,27 @@ import {
     const getSectionH = useCallback((): number =>
       mainRef.current?.clientHeight ?? (window.innerHeight - navbarH),
     [navbarH]);
+  
+    // ── Restore persisted index on mount ─────────────────────────────────────
+    //
+    //  useLayoutEffect fires after DOM mount but BEFORE the browser paints.
+    //  This means scrollTop is corrected before the first visible frame —
+    //  eliminating the Hero flash that useEffect caused (runs post-paint).
+    //  Must clamp against total so a stale localStorage value never causes
+    //  an out-of-bounds scroll (e.g. if sections were removed after last visit).
+    //
+    useLayoutEffect(() => {
+      const el = mainRef.current;
+      if (!el) return;
+  
+      const saved   = clamp(readStoredIndex(), 0, total - 1);
+      const targetY = saved * el.clientHeight;
+  
+      currentIdx.current = saved;
+      el.scrollTop       = targetY;
+      setScrollY(targetY);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // intentionally empty — runs exactly once after first mount
   
     // ── Zoom scale tracking via visualViewport ────────────────────────────────
     useEffect(() => {
@@ -205,7 +260,7 @@ import {
     }, [zoomScaleThreshold, zoomSettleDelay]);
   
     // ── Animation engine ──────────────────────────────────────────────────────
-    const animateScrollTo = useCallback((targetY: number): void => {
+    const animateScrollTo = useCallback((targetY: number, targetIdx: number): void => {
       const el = mainRef.current;
       if (!el) return;
   
@@ -234,6 +289,11 @@ import {
           setScrollY(targetY);
           isAnimating.current = false;
           rafRef.current      = null;
+  
+          // ── Persist index AFTER animation fully settles ──────────────────
+          //    Writing here (not at navigateTo call-site) guarantees we only
+          //    store indices that were actually reached, not mid-flight ones.
+          writeStoredIndex(targetIdx);
         }
       };
   
@@ -246,7 +306,7 @@ import {
       const next     = clamp(idx, 0, total - 1);
       const sectionH = getSectionH();
       currentIdx.current = next;
-      animateScrollTo(next * sectionH);
+      animateScrollTo(next * sectionH, next);  // ← pass next so animateScrollTo can persist it
     }, [animateScrollTo, getSectionH, total, isZoomedIn]);
   
     // ── Imperative handle — exposes scrollTo() to parent via ref ──────────────
