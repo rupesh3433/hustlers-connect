@@ -41,14 +41,12 @@ export function useServiceCarousel(
   panelWidth: number,
   cfg: CarouselConfig,
 ): CarouselState {
-  const { scrollThreshold, accumulatorDecay, slideDuration, autoAdvanceMs, touchThreshold } = cfg;
-
+    const { slideDuration, autoAdvanceMs, touchThreshold } = cfg;
   const [displayIdx, setDisplayIdx] = useState(1);
   const [animated,   setAnimated]   = useState(true);
   const [realIdx,    setRealIdx]    = useState(0);
 
   const transitioning = useRef(false);
-  const accumulator   = useRef(0);
   const decayTimer    = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoTimer     = useRef<ReturnType<typeof setInterval> | null>(null);
   const paused        = useRef(false);
