@@ -1,17 +1,24 @@
+// src/components/layout/navbar/NavLinks.tsx
+
 import React from "react";
 import type { NavItem } from "./NavMenuBar";
 
 interface NavLinksProps {
   items: NavItem[];
+  onItemClick: (label: string) => void; // ✅ added
 }
 
-const NavLinks: React.FC<NavLinksProps> = ({ items }) => {
+const NavLinks: React.FC<NavLinksProps> = ({
+  items,
+  onItemClick,
+}) => {
   return (
     <div className="hidden lg:flex items-center gap-8">
       {items.map((item) => (
-        <a
+        <button
           key={item.label}
-          href={item.path}
+          type="button"
+          onClick={() => onItemClick(item.label)}
           className="
             relative
             text-sm
@@ -23,6 +30,7 @@ const NavLinks: React.FC<NavLinksProps> = ({ items }) => {
           "
         >
           {item.label}
+
           <span
             className="
               absolute
@@ -38,7 +46,7 @@ const NavLinks: React.FC<NavLinksProps> = ({ items }) => {
               group-hover:w-full
             "
           />
-        </a>
+        </button>
       ))}
     </div>
   );

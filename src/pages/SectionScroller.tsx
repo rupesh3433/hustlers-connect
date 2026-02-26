@@ -15,16 +15,33 @@
 //    • All wheel/touch events passed through natively, no interception.
 //    • On zoom-out back to ≈1.0, re-snap to current section, restore mode 1.
 //
+//  IMPERATIVE HANDLE
+//  ─────────────────
+//  Exposes scrollTo(index) via forwardRef + useImperativeHandle so that
+//  external callers (e.g. Navbar) can programmatically navigate sections
+//  without prop-drilling callbacks into every section component.
+//
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 import {
     type FC,
     type ReactNode,
+    forwardRef,
     useRef,
     useEffect,
     useState,
     useCallback,
+    useImperativeHandle,
   } from "react";
+  
+  // ─────────────────────────────────────────────────────────────────────────────
+  //  Public handle type — import this wherever you hold a ref to SectionScroller
+  // ─────────────────────────────────────────────────────────────────────────────
+  
+  export interface SectionScrollerHandle {
+    /** Programmatically navigate to a section by zero-based index. */
+    scrollTo: (index: number) => void;
+  }
   
   // ─────────────────────────────────────────────────────────────────────────────
   //  Config interface
@@ -88,10 +105,13 @@ import {
       : 1;
   
   // ─────────────────────────────────────────────────────────────────────────────
-  //  Component
+  //  Inner component (receives forwarded ref as second argument)
   // ─────────────────────────────────────────────────────────────────────────────
   
-  const SectionScroller: FC<SectionScrollerProps> = ({
+  const SectionScrollerInner: FC<SectionScrollerProps & {
+    forwardedRef: React.ForwardedRef<SectionScrollerHandle>;
+  }> = ({
+    forwardedRef,
     sections,
     scrollThreshold      = DEFAULT_SCROLL_THRESHOLD,
     scrollDuration       = DEFAULT_SCROLL_DURATION,
@@ -143,42 +163,36 @@ import {
       if (!vv) return;
   
       const onVVResize = (): void => {
-        const scale = getScale();
+        const scale  = getScale();
         const zoomed = scale > zoomScaleThreshold;
   
         if (zoomed) {
-          // Entering or continuing zoom — activate zoom mode immediately
           setIsZoomedIn(true);
   
-          // Clear any pending settle timer
           if (zoomSettleTimerRef.current !== null) {
             clearTimeout(zoomSettleTimerRef.current);
             zoomSettleTimerRef.current = null;
           }
   
-          // Cancel any in-flight navigation
           if (rafRef.current !== null) {
             cancelAnimationFrame(rafRef.current);
             rafRef.current = null;
             isAnimating.current = false;
           }
   
-          // Clear accumulated scroll intent
           accumulator.current = 0;
           if (decayTimerRef.current !== null) {
             clearTimeout(decayTimerRef.current);
             decayTimerRef.current = null;
           }
         } else {
-          // Scale returned to normal — wait for settle, then restore navigation
           if (zoomSettleTimerRef.current !== null) clearTimeout(zoomSettleTimerRef.current);
           zoomSettleTimerRef.current = setTimeout(() => {
-            // Re-snap main scrollTop to current section using fresh DOM height
             const el = mainRef.current;
             if (el) {
-              const h = el.clientHeight;
+              const h       = el.clientHeight;
               const targetY = currentIdx.current * h;
-              el.scrollTop = targetY;
+              el.scrollTop  = targetY;
               setScrollY(targetY);
             }
             setIsZoomedIn(false);
@@ -226,6 +240,7 @@ import {
       rafRef.current = requestAnimationFrame(step);
     }, [scrollDuration, easing]);
   
+    // ── Core navigation ───────────────────────────────────────────────────────
     const navigateTo = useCallback((idx: number): void => {
       if (isAnimating.current || isZoomedIn) return;
       const next     = clamp(idx, 0, total - 1);
@@ -233,6 +248,18 @@ import {
       currentIdx.current = next;
       animateScrollTo(next * sectionH);
     }, [animateScrollTo, getSectionH, total, isZoomedIn]);
+  
+    // ── Imperative handle — exposes scrollTo() to parent via ref ──────────────
+    useImperativeHandle(
+      forwardedRef,
+      () => ({
+        scrollTo: (index: number): void => {
+          navigateTo(index);
+        },
+      }),
+      // Rebuild handle whenever navigateTo identity changes (zoom / total shifts)
+      [navigateTo]
+    );
   
     // ── Wheel ─────────────────────────────────────────────────────────────────
     useEffect(() => {
@@ -389,8 +416,7 @@ import {
         }}
       >
         {sections.map((section, i) => {
-          const opacity     = getOpacity(i);
-          const isActive    = i === currentIdx.current;
+          const opacity = getOpacity(i);
   
           return (
             <section
@@ -421,5 +447,15 @@ import {
       </main>
     );
   };
+  
+  // ─────────────────────────────────────────────────────────────────────────────
+  //  forwardRef wrapper — bridges React's ref forwarding API with our inner FC
+  // ─────────────────────────────────────────────────────────────────────────────
+  
+  const SectionScroller = forwardRef<SectionScrollerHandle, SectionScrollerProps>(
+    (props, ref) => <SectionScrollerInner {...props} forwardedRef={ref} />
+  );
+  
+  SectionScroller.displayName = "SectionScroller";
   
   export default SectionScroller;

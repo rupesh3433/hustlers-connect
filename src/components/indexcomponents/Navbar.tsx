@@ -1,3 +1,5 @@
+// src/components/indexcomponents/Navbar.tsx
+
 import React, { useEffect, useState } from "react";
 import NavLinks from "../layout/navbar/NavLinks";
 import NavMenuBar from "../layout/navbar/NavMenuBar";
@@ -5,7 +7,11 @@ import type { NavItem } from "../layout/navbar/NavMenuBar";
 import Logo from "../shared/Logo";
 import RightSideItems from "../layout/navbar/RightSideItems";
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  onNavigate: (index: number) => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState<boolean>(false);
 
@@ -19,42 +25,54 @@ const Navbar: React.FC = () => {
   }, []);
 
   const navItems: NavItem[] = [
-    { label: "Home", path: "/" },
-    { label: "About", path: "/" },
-    { label: "Features", path: "/" },
-    { label: "Pages", path: "/" },
-    { label: "News", path: "/" },
-    { label: "Contact", path: "/" },
+    { label: "Home", path: "#" },
+    { label: "Services", path: "#" },
+    { label: "Contact", path: "#" },
   ];
+
+  const handleItemClick = (label: string) => {
+    if (label === "Home") onNavigate(0);
+    if (label === "Services") onNavigate(1);
+    if (label === "Contact") onNavigate(2);
+  };
 
   return (
     <nav
       className={`
         fixed top-0 left-0 right-0
         h-16 md:h-20
-        z-[9999]
+        z-[10000]
         transition-all duration-500
-        backdrop-blur-sm
         ${
           scrolled
-            ? "bg-white/[0.03] border-b border-white/[0.06]"
+            ? "bg-[#0b0b12]/80 backdrop-blur-md border-b border-white/10"
             : "bg-transparent border-b border-transparent"
         }
       `}
     >
-      <div className="w-full h-full px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 2xl:px-32 flex items-center justify-between">
+      <div className="w-full h-full px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 2xl:px-32 flex items-center justify-between relative">
         <Logo />
-        <NavLinks items={navItems} />
+
+        <NavLinks
+          items={navItems}
+          onItemClick={handleItemClick}
+        />
+
         <RightSideItems
           mobileOpen={mobileOpen}
           onToggleMobile={() => setMobileOpen((prev) => !prev)}
         />
       </div>
 
+      {/* ✅ Glass Dropdown Only (No Fullscreen Overlay) */}
       <NavMenuBar
         navItems={navItems}
         isOpen={mobileOpen}
         onClose={() => setMobileOpen(false)}
+        onItemClick={(label) => {
+          handleItemClick(label);
+          setMobileOpen(false);
+        }}
       />
     </nav>
   );

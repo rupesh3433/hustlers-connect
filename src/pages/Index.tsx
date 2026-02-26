@@ -1,11 +1,14 @@
 // src/pages/Index.tsx
 
-import type { FC } from "react";
+import { type FC, useRef } from "react";
 import Navbar from "../components/indexcomponents/Navbar";
 import HeroSection from "../components/indexcomponents/HeroSection";
 import ServicesSection from "../components/indexcomponents/ServicesSection";
+import ContactSection from "../components/indexcomponents/ContactSection";
 import Footer from "../components/indexcomponents/Footer";
+import type { SectionScrollerHandle } from "./SectionScroller";
 import SectionScroller from "./SectionScroller";
+
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  ✦ SCROLL SETTINGS
@@ -26,24 +29,26 @@ const SCROLL_SETTINGS = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const Index: FC = () => {
-  return (
-    /*
-      `fixed inset-0`   — always covers exactly the visual viewport
-      `bg-[#010106]`    — page background, never shows a gap
-      `overflow-hidden` — clips anything that momentarily overflows
+  const scrollerRef = useRef<SectionScrollerHandle>(null);
 
-      SectionScroller's <main> uses position:absolute so it needs a
-      positioned ancestor — `fixed` provides that.
-    */
+  const handleNavigate = (index: number) => {
+    scrollerRef.current?.scrollTo(index);
+  };
+
+  return (
     <div className="fixed inset-0 bg-[#010106] overflow-hidden">
-      <Navbar />
+      
+      {/* ✅ Pass required prop */}
+      <Navbar onNavigate={handleNavigate} />
 
       <SectionScroller
+        ref={scrollerRef}
         {...SCROLL_SETTINGS}
         sections={[
-          <HeroSection />,
-          <ServicesSection />,
-          <Footer />,
+          <HeroSection key="hero" />,
+          <ServicesSection key="services" />,
+          <ContactSection key="contact" />,
+          <Footer key="footer" />,
         ]}
       />
     </div>
