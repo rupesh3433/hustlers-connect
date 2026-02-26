@@ -22,9 +22,6 @@ const format = (n: number): string => {
   return `${Math.floor(n / 1_000_000)}M+`;
 };
 
-/* ------------------------------ */
-/* Generic InView Hook (FIXED)    */
-/* ------------------------------ */
 const useInViewOnce = <T extends HTMLElement>(
   ref: React.RefObject<T | null>
 ): boolean => {
@@ -54,9 +51,6 @@ const useInViewOnce = <T extends HTMLElement>(
   return visible;
 };
 
-/* ------------------------------ */
-/* Animated Counter Component     */
-/* ------------------------------ */
 interface AnimatedCounterProps {
   target: number;
   duration: number;
@@ -110,10 +104,6 @@ const AnimatedCounter: React.FC<
   return <>{format(count)}</>;
 };
 
-/* ------------------------------ */
-/* Main Component                 */
-/* ------------------------------ */
-
 const DynamicCount: React.FC<
   DynamicCountProps
 > = ({
@@ -130,12 +120,12 @@ const DynamicCount: React.FC<
   const statsContent = useMemo(() => {
     return STATS.map((stat, index) => (
       <React.Fragment key={stat.label}>
-        <div className="flex flex-col items-center gap-1.5">
+        <div className="flex flex-col items-center gap-1">
           <span
             className="
-              text-[clamp(25px,3vw,25px)]
+              text-[clamp(20px,2.2vw,22px)]
               font-bold
-              leading-none
+              leading-[1]
               bg-gradient-to-r
               from-[#4f8eff]
               via-[#b44fff]
@@ -153,9 +143,10 @@ const DynamicCount: React.FC<
 
           <span
             className="
-              text-[10px]
+              text-[9px]
               uppercase
               tracking-wide
+              leading-[1.1]
               text-white/30
             "
           >
@@ -164,7 +155,7 @@ const DynamicCount: React.FC<
         </div>
 
         {index < STATS.length - 1 && (
-          <div className="w-px h-6 bg-white/10" />
+          <div className="w-px h-5 bg-white/10" />
         )}
       </React.Fragment>
     ));
@@ -175,13 +166,11 @@ const DynamicCount: React.FC<
       ref={containerRef}
       className={`w-full flex flex-col items-center text-center gap-1 ${className}`}
     >
-      {/* Top Label */}
-      <p className="text-[11px] font-extrabold text-white/35 tracking-[0.4em] uppercase">
+      <p className="text-[10px] font-bold text-white/35 tracking-[0.35em] leading-[1.1] uppercase">
         Generating...
       </p>
 
-      {/* Stats Row */}
-      <div className="flex items-center justify-center gap-3">
+      <div className="flex items-center justify-center gap-2.5">
         {statsContent}
       </div>
     </div>

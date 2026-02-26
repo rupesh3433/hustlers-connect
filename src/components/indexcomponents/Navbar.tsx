@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import NavLinks from "./NavLinks";
-import NavMenuBar from "./NavMenuBar";
-import type { NavItem } from "./NavMenuBar";
-import Logo from "../../shared/Logo";
-import RightSideItems from "./RightSideItems";
+import NavLinks from "../layout/navbar/NavLinks";
+import NavMenuBar from "../layout/navbar/NavMenuBar";
+import type { NavItem } from "../layout/navbar/NavMenuBar";
+import Logo from "../shared/Logo";
+import RightSideItems from "../layout/navbar/RightSideItems";
 
 const Navbar: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
@@ -27,42 +27,34 @@ const Navbar: React.FC = () => {
     { label: "Contact", path: "/" },
   ];
 
-  const toggleMobileMenu = (): void => {
-    setMobileOpen((prev) => !prev);
-  };
-
-  const closeMobileMenu = (): void => {
-    setMobileOpen(false);
-  };
-
   return (
     <nav
       className={`
         fixed top-0 left-0 right-0
+        h-16 md:h-20
         z-[9999]
-        transition-all duration-300
+        transition-all duration-500
+        backdrop-blur-sm
         ${
           scrolled
-            ? "bg-white/5 backdrop-blur-md border-b border-white/10"
-            : "bg-transparent"
+            ? "bg-white/[0.03] border-b border-white/[0.06]"
+            : "bg-transparent border-b border-transparent"
         }
       `}
     >
-      <div className="w-full min-h-16 md:min-h-20 px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 2xl:px-32 flex items-center justify-between py-3">
+      <div className="w-full h-full px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 2xl:px-32 flex items-center justify-between">
         <Logo />
-
         <NavLinks items={navItems} />
-
         <RightSideItems
           mobileOpen={mobileOpen}
-          onToggleMobile={toggleMobileMenu}
+          onToggleMobile={() => setMobileOpen((prev) => !prev)}
         />
       </div>
 
       <NavMenuBar
         navItems={navItems}
         isOpen={mobileOpen}
-        onClose={closeMobileMenu}
+        onClose={() => setMobileOpen(false)}
       />
     </nav>
   );

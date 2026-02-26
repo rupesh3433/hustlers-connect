@@ -1,25 +1,34 @@
+// src/components/indexcomponents/HeroSection.tsx
+
 import React from "react";
-import HeroTexts from "./texts/HeroTextsmain";
-import HeroProcess from "./process/HeroProcess";
+import HeroTexts from "../hero/texts/HeroTextsmain";
+import HeroProcess from "../hero/process/HeroProcess";
 
 const HeroSection: React.FC = () => {
   return (
+    /*
+      `h-full`      — fills sectionH given by SectionScroller, no gap
+      `bg-[#010106] — explicit background matches root, covers any
+                      transparent child gaps that would show as black
+      `overflow-visible` — keeps glow effects from clipping
+    */
     <section
-      style={{ scrollSnapAlign: "start" }}
       className="
         relative
         w-full
-        bg-transparent
+        h-full
+        bg-[#010106]
         pt-16
         sm:pt-18
         md:pt-20
-        lg:pt-24
+        lg:pt-14
+        overflow-visible
       "
     >
       <div
         className="
           w-full
-          max-w-[1400px]
+          max-w-350
           mx-auto
           px-4
           sm:px-6
@@ -31,21 +40,11 @@ const HeroSection: React.FC = () => {
           items-center
         "
       >
-        {/* Text Block */}
         <div className="w-full max-w-3xl">
           <HeroTexts />
         </div>
 
-        {/* Process Block (SHIFTED UP SAFELY) */}
-        <div
-          className="
-            w-full
-            relative
-            -mt-30
-            md:-mt-32
-            lg:-mt-32
-          "
-        >
+        <div className="w-full relative -mt-30 md:-mt-32 lg:-mt-32">
           <HeroProcess />
         </div>
       </div>

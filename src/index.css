@@ -1,48 +1,56 @@
 @import "tailwindcss";
 
 /* ============================================================
-   FAST + STRONG SNAP (Production Balanced)
+   CLEAN GLOBAL BASE
 ============================================================ */
 
-html {
-  height: 100%;
-  scroll-behavior: auto;              /* remove browser slow smooth */
-  scroll-snap-type: y mandatory;      /* keep strong snap */
-  scroll-padding-top: 64px; /* mobile navbar height */
-}
-
-@media (min-width: 768px) {
-   html {
-     scroll-padding-top: 80px; /* desktop navbar height */
-   }
- }
-
+html,
 body {
-  min-height: 100%;
+  height: 100%;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
   background-color: #010106;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overscroll-behavior-y: none;
 }
 
-/* Each full-screen section */
-section {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;           /* force perfect stop */
+/* ============================================================
+   SCROLL SNAP — REMOVED FROM GLOBAL
+   ─────────────────────────────────────────────────────────
+   scroll-snap-type and scroll-snap-align are now set inline
+   on <main> and each <section> inside Index.tsx only.
+   This way other pages/routes are completely unaffected.
+   See Index.tsx → mainRef inline style + section style props.
+============================================================ */
+
+/* ============================================================
+   HIDE SCROLLBAR (SCROLL STILL WORKS)
+============================================================ */
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
 }
 
-/* Performance optimization */
+/* Firefox */
+html {
+  scrollbar-width: none;
+}
+
+/* IE / Legacy Edge */
+html {
+  -ms-overflow-style: none;
+}
+
+/* ============================================================
+   OPTIONAL PERFORMANCE OPTIMIZATION
+============================================================ */
+
 .snap-section {
   will-change: transform;
   backface-visibility: hidden;
   transform: translateZ(0);
 }
-
-/* Prevent elastic overscroll bounce */
-html,
-body {
-  overscroll-behavior-y: none;
-}
-

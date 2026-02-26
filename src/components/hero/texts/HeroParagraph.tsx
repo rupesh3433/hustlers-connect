@@ -13,15 +13,12 @@ const HeroParagraph: React.FC<HeroParagraphProps> = ({
     <p
       className="
         w-full
-        max-w-[42rem]
+        max-w-[70rem]
         mx-auto
         text-center
 
-        text-[1rem]
-        sm:text-[1.05rem]
-        md:text-[1.1rem]
-
-        leading-[1.5]
+        text-[0.85rem]
+        leading-[1.3]
         tracking-[0.01em]
 
         text-white/70

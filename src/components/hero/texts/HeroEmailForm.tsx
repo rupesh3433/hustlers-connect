@@ -8,16 +8,12 @@ const emailRegex: RegExp =
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const HeroEmailForm = () => {
-  const [email, setEmail] =
-    useState<string>("");
-  const [isLoading, setIsLoading] =
-    useState<boolean>(false);
+  const [email, setEmail] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showErrorPlaceholder, setShowErrorPlaceholder] =
     useState<boolean>(false);
 
-  const validateEmail = (
-    value: string
-  ): boolean => {
+  const validateEmail = (value: string): boolean => {
     const trimmed = value.trim();
 
     if (!trimmed || !emailRegex.test(trimmed)) {
@@ -54,25 +50,24 @@ const HeroEmailForm = () => {
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="w-full max-w-md"
+      className="w-full max-w-xs"
     >
       <div
         className="
           w-full
           flex
           items-center
-          rounded-2xl
+          rounded-xl
           overflow-hidden
-          shadow-xl
-          backdrop-blur-lg
+          shadow-lg
+          backdrop-blur-md
           border border-white/10
           transition-all
           duration-300
-          focus-within:scale-[1.01]
         "
         style={{
           background:
-            "linear-gradient(135deg, rgba(59,130,246,0.12), rgba(139,92,246,0.12), rgba(239,68,68,0.10))",
+            "linear-gradient(135deg, rgba(59,130,246,0.10), rgba(139,92,246,0.10), rgba(239,68,68,0.08))",
         }}
       >
         {/* Input */}
@@ -93,8 +88,8 @@ const HeroEmailForm = () => {
           }}
           placeholder={
             showErrorPlaceholder
-              ? "Invalid Email Format! Click here to re-enter."
-              : "Enter your work email"
+              ? "Invalid Email"
+              : "Work email"
           }
           disabled={isLoading}
           variant="glass"
@@ -106,9 +101,11 @@ const HeroEmailForm = () => {
             bg-transparent
             focus:ring-0
             focus:outline-none
-            !py-2
-            px-4
-            h-[36px]
+            px-3
+            py-1.5
+            h-[32px]
+            text-[0.8rem]
+            leading-[1.1]
             ${
               showErrorPlaceholder
                 ? "placeholder:text-red-500 text-red-500"
@@ -125,16 +122,17 @@ const HeroEmailForm = () => {
           isLoading={isLoading}
           disabled={isLoading}
           className="
-            h-[36px]
-            px-4
-            text-xs
+            h-[32px]
+            px-3
+            text-[0.7rem]
+            leading-[1]
             whitespace-nowrap
             border-0
             focus:outline-none
             focus:ring-0
           "
         >
-          Get Access
+          Access
         </ButtonCustom>
       </div>
     </form>

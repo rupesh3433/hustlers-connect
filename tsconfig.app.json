@@ -24,5 +24,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "src/components/layout/navbar/Navbar.tsx"]
+  "include": ["src", "src/components/indexcomponents/Navbar.tsx"]
 }
