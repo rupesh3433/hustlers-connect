@@ -260,7 +260,7 @@ export const VisualWeb = ({ a, d }: { a: string; d: string }) => (
 );
 
 /** 4 — Brand Deals visual */
-export const VisualBrandDeals = ({ a, d }: { a: string; d: string }) => (
+export const VisualBrandDeals = ({ a, d: _d }: { a: string; d: string }) => (
   <svg viewBox="0 0 380 280" fill="none" width="100%" height="100%">
     <defs>
       <radialGradient id="vb4" cx="50%" cy="50%" r="56%">
@@ -293,7 +293,7 @@ export const VisualBrandDeals = ({ a, d }: { a: string; d: string }) => (
 );
 
 /** 5 — Business Scaling visual */
-export const VisualBusiness = ({ a, d }: { a: string; d: string }) => (
+export const VisualBusiness = ({ a, d: _d }: { a: string; d: string }) => (
   <svg viewBox="0 0 380 280" fill="none" width="100%" height="100%">
     <defs>
       <radialGradient id="vbs5" cx="50%" cy="55%" r="56%">
@@ -329,7 +329,7 @@ export const VisualBusiness = ({ a, d }: { a: string; d: string }) => (
 );
 
 /** 6 — AI Agents visual */
-export const VisualAI = ({ a, d }: { a: string; d: string }) => (
+export const VisualAI = ({ a, d: _d }: { a: string; d: string }) => (
   <svg viewBox="0 0 380 280" fill="none" width="100%" height="100%">
     <defs>
       <radialGradient id="vai6" cx="50%" cy="48%" r="56%">
