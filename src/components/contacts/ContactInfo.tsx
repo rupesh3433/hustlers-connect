@@ -8,21 +8,21 @@ const INFO = [
   {
     icon: "✉",
     label: "Email",
-    value: "hello@yourcompany.com",
-    href: "mailto:hello@yourcompany.com",
+    value: "hustlersconnectwork@gmail.com",
+    href: "mailto:hustlersconnectwork@gmail.com",
     accentColor: "#7c9fff",
   },
   {
     icon: "📞",
     label: "Phone",
-    value: "+1 (555) 000-1234",
-    href: "tel:+15550001234",
+    value: "+91 8830051328",
+    href: "tel:+918830051328",
     accentColor: "#a855f7",
   },
   {
     icon: "📍",
     label: "Location",
-    value: "Mumbai, India",
+    value: "Pune, India",
     accentColor: "#e0304e",
   },
   {
