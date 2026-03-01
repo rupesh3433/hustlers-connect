@@ -1,4 +1,5 @@
-import React from "react";
+// src/components/layout/navbar/RightSideItems.tsx
+
 import ButtonCustom from "../../shared/ButtonCustom";
 import { ArrowRight, Sun, Moon } from "lucide-react";
 import { useTheme } from "../../shared/ThemeContext";
@@ -6,27 +7,27 @@ import { useTheme } from "../../shared/ThemeContext";
 interface RightSideItemsProps {
   mobileOpen: boolean;
   onToggleMobile: () => void;
+  onContactClick: () => void;
 }
 
-const RightSideItems: React.FC<RightSideItemsProps> = ({
+const RightSideItems = ({
   mobileOpen,
   onToggleMobile,
-}) => {
+  onContactClick,
+}: RightSideItemsProps) => {
   const { theme, toggleTheme } = useTheme();
 
   return (
     <div className="flex items-center gap-4 md:gap-6">
-      
-      {/* Theme Toggle */}
+
+      {/* Theme toggle */}
       <button
         onClick={toggleTheme}
-        aria-label="Toggle Theme"
+        aria-label="Toggle theme"
         className="
-          relative
-          w-10 h-10
+          relative w-10 h-10
           flex items-center justify-center
-          rounded-full
-          border
+          rounded-full border
           transition-all duration-300
           bg-gray-100 dark:bg-white/10
           border-black/10 dark:border-white/20
@@ -38,8 +39,7 @@ const RightSideItems: React.FC<RightSideItemsProps> = ({
           <Sun
             size={18}
             className={`
-              absolute inset-0
-              transition-all duration-300
+              absolute inset-0 transition-all duration-300
               ${theme === "dark"
                 ? "opacity-0 rotate-90 scale-75"
                 : "opacity-100 rotate-0 scale-100"}
@@ -48,8 +48,7 @@ const RightSideItems: React.FC<RightSideItemsProps> = ({
           <Moon
             size={18}
             className={`
-              absolute inset-0
-              transition-all duration-300
+              absolute inset-0 transition-all duration-300
               ${theme === "dark"
                 ? "opacity-100 rotate-0 scale-100"
                 : "opacity-0 -rotate-90 scale-75"}
@@ -58,14 +57,15 @@ const RightSideItems: React.FC<RightSideItemsProps> = ({
         </div>
       </button>
 
-      {/* Desktop Sign In */}
+      {/* Desktop — Contact Us CTA */}
       <div className="hidden lg:block">
         <ButtonCustom
           size="medium"
           background="grey"
           className="group gap-2"
+          onClick={onContactClick}
         >
-          <span>Sign In</span>
+          <span>Contact Us</span>
           <ArrowRight
             size={16}
             className="transition-transform duration-300 group-hover:translate-x-1"
@@ -73,34 +73,27 @@ const RightSideItems: React.FC<RightSideItemsProps> = ({
         </ButtonCustom>
       </div>
 
-      {/* Hamburger / Close */}
+      {/* Mobile hamburger / close */}
       <button
         onClick={onToggleMobile}
-        aria-label="Menu"
+        aria-label={mobileOpen ? "Close menu" : "Open menu"}
         className="lg:hidden group focus:outline-none focus:ring-0"
       >
         <div
           className={`
-            w-9 h-9
-            flex items-center justify-center
-            rounded-full
+            w-9 h-9 flex items-center justify-center rounded-full
             transition-all duration-300
-            ${
-              mobileOpen
-                ? "bg-red-600 text-white scale-105"
-                : "bg-transparent text-gray-800 dark:text-white"
-            }
+            ${mobileOpen
+              ? "bg-red-600 text-white scale-105"
+              : "bg-transparent text-gray-800 dark:text-white"}
           `}
         >
           <svg
             className={`
-              w-5 h-5
-              transition-transform duration-500 ease-out
-              ${
-                mobileOpen
-                  ? "rotate-[720deg]"         // 2 quick spins when opening
-                  : "group-hover:rotate-[360deg]"  // 1 spin on hover
-              }
+              w-5 h-5 transition-transform duration-500 ease-out
+              ${mobileOpen
+                ? "rotate-[720deg]"
+                : "group-hover:rotate-[360deg]"}
             `}
             fill="none"
             stroke="currentColor"

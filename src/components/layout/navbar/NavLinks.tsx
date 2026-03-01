@@ -1,26 +1,23 @@
-import React from "react";
+// src/components/layout/navbar/NavLinks.tsx
+
 import type { NavItem } from "./NavMenuBar";
 
 interface NavLinksProps {
   items: NavItem[];
-  onItemClick: (label: string) => void;
+  onItemClick: (sectionIndex: number) => void;
 }
 
-const NavLinks: React.FC<NavLinksProps> = ({
-  items,
-  onItemClick,
-}) => {
+const NavLinks = ({ items, onItemClick }: NavLinksProps) => {
   return (
     <div className="hidden lg:flex items-center gap-8">
       {items.map((item) => (
         <button
           key={item.label}
           type="button"
-          onClick={() => onItemClick(item.label)}
+          onClick={() => onItemClick(item.sectionIndex)}
           className="
             relative
-            text-sm
-            font-medium
+            text-sm font-medium
             text-black/70 dark:text-white/70
             hover:text-black dark:hover:text-white
             transition
@@ -31,16 +28,10 @@ const NavLinks: React.FC<NavLinksProps> = ({
 
           <span
             className="
-              absolute
-              -bottom-1
-              left-0
-              w-0
-              h-0.5
-              bg-gradient-to-r
-              from-purple-500
-              to-pink-500
-              transition-all
-              duration-300
+              absolute -bottom-1 left-0
+              w-0 h-0.5
+              bg-gradient-to-r from-purple-500 to-pink-500
+              transition-all duration-300
               group-hover:w-full
             "
           />

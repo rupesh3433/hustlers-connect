@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+// src/components/indexcomponents/Navbar.tsx
+
+import { useEffect, useState } from "react";
 import NavLinks from "../layout/navbar/NavLinks";
 import NavMenuBar from "../layout/navbar/NavMenuBar";
 import type { NavItem } from "../layout/navbar/NavMenuBar";
@@ -9,29 +11,32 @@ interface NavbarProps {
   onNavigate: (index: number) => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
+const Navbar = ({ onNavigate }: NavbarProps) => {
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
-  const [scrolled, setScrolled] = useState<boolean>(false);
+  const [scrolled, setScrolled]     = useState<boolean>(false);
 
   useEffect(() => {
-    const handleScroll = (): void => {
-      setScrolled(window.scrollY > 40);
-    };
-
+    const handleScroll = (): void => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // ── Section index map ──────────────────────────────────────────────────────
+  //  0 → HeroSection
+  //  1 → ServicesSection
+  //  2 → TestimonialSection
+  //  3 → ContactSection
+  //  4 → Footer
+  // ──────────────────────────────────────────────────────────────────────────
   const navItems: NavItem[] = [
-    { label: "Home", path: "#" },
-    { label: "Services", path: "#" },
-    { label: "Contact", path: "#" },
+    { label: "Home",         sectionIndex: 0 },
+    { label: "Services",     sectionIndex: 1 },
+    { label: "Testimonials", sectionIndex: 2 },
+    { label: "Contact",      sectionIndex: 3 },
   ];
 
-  const handleItemClick = (label: string) => {
-    if (label === "Home") onNavigate(0);
-    if (label === "Services") onNavigate(1);
-    if (label === "Contact") onNavigate(2);
+  const handleItemClick = (sectionIndex: number): void => {
+    onNavigate(sectionIndex);
   };
 
   return (
@@ -44,12 +49,9 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
         text-[color:var(--text-primary)]
         ${
           scrolled
-            ? `
-              bg-[color:var(--bg-primary)]/80
-              backdrop-blur-md
-              border-b
-              border-black/10 dark:border-white/10
-            `
+            ? `bg-[color:var(--bg-primary)]/80
+               backdrop-blur-md
+               border-b border-black/10 dark:border-white/10`
             : "bg-transparent border-b border-transparent"
         }
       `}
@@ -65,6 +67,10 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
         <RightSideItems
           mobileOpen={mobileOpen}
           onToggleMobile={() => setMobileOpen((prev) => !prev)}
+          onContactClick={() => {
+            onNavigate(3);         // → ContactSection
+            setMobileOpen(false);
+          }}
         />
       </div>
 
@@ -72,8 +78,12 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
         navItems={navItems}
         isOpen={mobileOpen}
         onClose={() => setMobileOpen(false)}
-        onItemClick={(label) => {
-          handleItemClick(label);
+        onItemClick={(sectionIndex) => {
+          handleItemClick(sectionIndex);
+          setMobileOpen(false);
+        }}
+        onContactClick={() => {
+          onNavigate(3);
           setMobileOpen(false);
         }}
       />
