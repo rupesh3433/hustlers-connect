@@ -5,7 +5,8 @@ import { ArrowRight } from "lucide-react";
 
 export interface NavItem {
   label: string;
-  sectionIndex: number;
+  sectionIndex?: number;
+  path?: string;
 }
 
 interface NavMenuBarProps {
@@ -58,7 +59,9 @@ const NavMenuBar = ({
               key={item.label}
               type="button"
               onClick={() => {
-                onItemClick(item.sectionIndex);
+                if (typeof item.sectionIndex === "number") {
+                  onItemClick(item.sectionIndex);
+                }
                 onClose();
               }}
               className="

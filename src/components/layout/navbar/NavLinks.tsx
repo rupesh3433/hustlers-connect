@@ -14,7 +14,11 @@ const NavLinks = ({ items, onItemClick }: NavLinksProps) => {
         <button
           key={item.label}
           type="button"
-          onClick={() => onItemClick(item.sectionIndex)}
+          onClick={() => {
+            if (typeof item.sectionIndex === "number") {
+              onItemClick(item.sectionIndex);
+            }
+          }}
           className="
             relative
             text-sm font-medium
