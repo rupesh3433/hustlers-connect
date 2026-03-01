@@ -9,6 +9,7 @@ import Footer from "../components/indexcomponents/Footer";
 import type { SectionScrollerHandle } from "./SectionScroller";
 import SectionScroller from "./SectionScroller";
 import ThemeBackground from "../components/shared/ThemeBackground";
+import TestimonialSection from "../components/indexcomponents/TestimonialSection";
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  ✦ SCROLL SETTINGS
@@ -56,6 +57,7 @@ const Index: FC = () => {
           sections={[
             <HeroSection key="hero" />,
             <ServicesSection key="services" />,
+            <TestimonialSection key="testimonial" />,
             <ContactSection key="contact" />,
             <Footer key="footer" />,
           ]}
